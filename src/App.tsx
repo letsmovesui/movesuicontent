@@ -1,7 +1,8 @@
 import "./App.css";
 import { Route, Routes } from "react-router-dom";
 import { Course } from "./page/Course/Course";
-import { CourseDetail } from "./page/Course/CourseDetail/CourseDetail";
+import { ListCourseDetail } from "./page/Course/ListCourseDetail/ListCourseDetail";
+import { Lesson } from "./page/Course/Lesson/Lesson";
 function App() {
   return (
     <>
@@ -22,7 +23,8 @@ function App() {
           );
         })} */}
         <Route path="/" element={<Course />} />
-        <Route path="/modules/:id" element={<CourseDetail />} />
+        <Route path="/modules/:id" element={<ListCourseDetail />} />
+        <Route path="/modules/:id/:lesson" element={<Lesson />} />
         {/* </Route> */}
       </Routes>
     </>

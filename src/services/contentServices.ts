@@ -7,9 +7,12 @@ export const githubAPI = {
     return await axios.get<IGit[]>(`${UrlGithubContent}`);
   },
   contentByName: async (name: string) => {
-    return await axios.get<IGit>(`${UrlGithubContent}/${name}/test.json`);
+    return await axios.get<IGit>(`${UrlGithubContent}/${name}/title.json`);
   },
   modules: async (name: string) => {
-    return await axios.get<IGit>(`${UrlGithubContent}/${name}`);
+    return await axios.get<IGit[]>(`${UrlGithubContent}/${name}`);
+  },
+  getUrlCourseTitle: async (url: string) => {
+    return await axios.get<IGit>(`${url}`);
   },
 };
