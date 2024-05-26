@@ -17,7 +17,7 @@ export const ListCourseDetail = () => {
         data.map(async (e) => {
           if (e.type !== "file") {
             const { data } = await githubAPI.getUrlCourseTitle(
-              `${e.url.split("?")[0]}/course1.json`
+              `${e.url.split("?")[0]}/title.json`
             );
             const jsonContent = JSON.parse(atob(data.content || ""));
             return {
