@@ -32,7 +32,7 @@ export const Course = () => {
   }, []);
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       {listCourse?.map((e, index) => {
         return (
           <div
@@ -40,12 +40,15 @@ export const Course = () => {
             onClick={() => {
               navigate(`/modules/${e.name}`);
             }}
+            className="bg-[#f3f3f3] border border-transparent rounded-[32px] px-10 py-5 hover:border-[#b7b7b7]"
           >
-            <Box>Title:{e?.title.en}</Box>
-            <Box>dis: {e?.description.en}</Box>
+            <div className="text-start">
+              <Box className="text-[32px] font-bold">{e?.title.en}</Box>
+              <Box className="text-sm">{e?.description.en}</Box>
+            </div>
           </div>
         );
       })}
-    </>
+    </div>
   );
 };

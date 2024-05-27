@@ -17,3 +17,13 @@ export type CourseDetailType = {
   name: string;
   id: string;
 };
+export type LessonType = {
+  codeSol: string;
+  quizType: string;
+  answers: [];
+  lessonId: string;
+  codeDef: string;
+  title: string;
+  quizTitle: string;
+  content: string;
+};

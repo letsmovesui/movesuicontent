@@ -15,4 +15,9 @@ export const githubAPI = {
   getUrlCourseTitle: async (url: string) => {
     return await axios.get<IGit>(`${url}`);
   },
+  lessons: async (content: string, modules: string) => {
+    return await axios.get<IGit>(
+      `${UrlGithubContent}/${content}/${modules}/title.json`
+    );
+  },
 };

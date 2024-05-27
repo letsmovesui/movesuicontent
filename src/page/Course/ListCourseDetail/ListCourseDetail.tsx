@@ -39,21 +39,22 @@ export const ListCourseDetail = () => {
   }, [pram?.id]);
 
   return (
-    <>
+    <div className="flex flex-col gap-8">
       {listCourse?.map((e, index) => {
         if (e) {
           return (
             <div
               key={index}
               onClick={() => {
-                navigate(`${e.name}`);
+                navigate(`${e.id}`);
               }}
+              className="bg-[#f3f3f3] border border-transparent rounded-[32px] p-8 hover:border-[#b7b7b7]"
             >
-              <Box>Title:{e?.name}</Box>
+              <Box className="text-[32px] font-bold">{e?.name}</Box>
             </div>
           );
         }
       })}
-    </>
+    </div>
   );
 };

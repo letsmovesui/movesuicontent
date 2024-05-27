@@ -1,32 +1,24 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Box } from "@chakra-ui/react";
-import { CourseDetailType } from "../../../services/types";
+import { LessonType } from "../../../services/types";
 import { githubAPI } from "../../../services/contentServices";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 export const Lesson = () => {
-  const [listCourse, setListCourse] = useState<CourseDetailType[]>([]);
+  const [listLesson, setListLesson] = useState<{
+    title: string;
+    lesson: LessonType[];
+  }>();
   const pram = useParams();
-  const navigate = useNavigate();
   const getGithubContent = async () => {
     try {
-      const { data } = await githubAPI.modules(pram.id || "");
-      const rs = await Promise.all(
-        data.map(async (e) => {
-          if (e.type !== "file") {
-            const { data } = await githubAPI.getUrlCourseTitle(
-              `${e.url.split("?")[0]}/course1.json`
-            );
-            const jsonContent = JSON.parse(atob(data.content || ""));
-            return {
-              id: e.name,
-              ...jsonContent,
-            };
-          }
-        })
+      const { data } = await githubAPI.lessons(
+        pram.id || "",
+        pram.lesson || ""
       );
-      setListCourse(rs);
+      const jsonContent = JSON.parse(atob(data.content || ""));
+      setListLesson(jsonContent);
     } catch (error) {
       console.log(error);
     }
@@ -38,21 +30,19 @@ export const Lesson = () => {
   }, [pram?.id]);
 
   return (
-    <>
-      {listCourse?.map((e, index) => {
+    <div className="flex flex-col gap-8">
+      {listLesson?.lesson?.map((e, index) => {
         if (e) {
           return (
             <div
               key={index}
-              onClick={() => {
-                navigate(`/modules/${e.name}`);
-              }}
+              className="bg-[#f3f3f3] border border-transparent rounded-[32px] p-8 hover:border-[#b7b7b7]"
             >
-              <Box>Title:{e?.name}</Box>
+              <Box className="text-[32px] font-bold">{e?.title}</Box>
             </div>
           );
         }
       })}
-    </>
+    </div>
   );
 };
