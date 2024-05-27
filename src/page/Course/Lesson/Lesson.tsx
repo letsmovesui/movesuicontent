@@ -9,9 +9,6 @@ export const Lesson = () => {
   const [listCourse, setListCourse] = useState<CourseDetailType[]>([]);
   const pram = useParams();
   const navigate = useNavigate();
-  const importAll = (r) => {
-    return r.keys().map(r);
-  };
   const getGithubContent = async () => {
     try {
       const { data } = await githubAPI.modules(pram.id || "");
