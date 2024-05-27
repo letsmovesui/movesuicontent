@@ -1,0 +1,10 @@
+{
+  "title": {
+    "en": "Sui Standards",
+    "vi": "Sui Standards"
+  },
+  "description": {
+    "en": "This course dives into the standards on Sui such as NFTs and Coins, Sui’s own ERC-20 and ERC-1155 equivalents, and shows learners how to combine them into their applications. Different design patterns regarding managing NFTs from manual (creator-based) to automated (shared object based) are discussed with hand-on exercises to build a deeper understanding and intuition. This course will help both new developers and those already familiar with similar concepts on other networks to quickly pick up the unique concepts on Sui and how to build rich and flexible applications. This also sets the foundation for learners to later dive into courses that cover full e2e development and how to take a full application on other chains (Solidity/EVM, Sui/Move) and build similar yet much simpler applications on Sui, thanks to the expressibility and simplicity of the Object model.",
+    "vi": "This course dives into the standards on Sui such as NFTs and Coins, Sui’s own ERC-20 and ERC-1155 equivalents, and shows learners how to combine them into their applications. Different design patterns regarding managing NFTs from manual (creator-based) to automated (shared object based) are discussed with hand-on exercises to build a deeper understanding and intuition. This course will help both new developers and those already familiar with similar concepts on other networks to quickly pick up the unique concepts on Sui and how to build rich and flexible applications. This also sets the foundation for learners to later dive into courses that cover full e2e development and how to take a full application on other chains (Solidity/EVM, Sui/Move) and build similar yet much simpler applications on Sui, thanks to the expressibility and simplicity of the Object model."
+  }
+}
