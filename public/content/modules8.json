@@ -1,0 +1,185 @@
+{
+  "curStatus": "ready",
+  "description": "",
+  "id": "8",
+  "lesson": [
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Tests in Move run faster",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. Tests in Move are easier to write and can test more deeply all functionalities in a module",
+          "isCorrect": true
+        },
+        {
+          "answer": "C. Tests in Move come with built-in formal verification",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "1",
+      "codeDef": "",
+      "title": "Separate test files for conciseness",
+      "quizTitle": "What are the benefits of writing unit tests in Move?",
+      "content": "# Why unit tests\nUnit tests are a critical part of the development process. They help ensure that the code behaves as expected and that changes to the code do not break existing functionality.\n\nEspecially in the smart contract world, where bugs can be very costly (millions of dollars at stake!), unit tests are a must-have. In general, developers are recommended to write tests that cover:\n- The happy path: tests that cover the expected behavior of the code.\n- Edge cases: tests that cover the unexpected behavior of the code. Especially cases that lead to errors.\n- E2E tests: tests that cover the full flow of the code, including the interaction with other modules and the blockchain.\n\nIn addition to unit tests, developers can also write integration tests, which would be in Typescript and can test everything end-to-end, including the interaction with the blockchain run locally.\n\n# Unit tests in Move\nUnit tests in Move, different from Solidity, are natively designed to be written directly in Move. This allows for deep integration with the language and the ability to test the full range of Move code.\nMove unit tests can be written in the same file as the module being tested. However, it is recommended to write tests in a separate file to keep the module file clean and focused on the module's implementation.\nThis also reduces the amount of #[test_only] annotations needed to be added for test-only logic. We'll discuss this more in a later lesson in this course.\nThe structure of a Move source code directory is as below:\n- sources/\n  - module1.move\n  - module2.move\n  - module3.move\n- tests/\n  - module1_tests.move\n  - module2_tests.move\n  - module3_tests.move\n- Move.toml\n\nThere should be a separate file for each module's tests. The file name should be the module name followed by _tests.move. For example, if the module name is my_module, the test file should be named my_module_tests.move.\n\nEach test module looks like this:\n```\n#[test_only]\nmodule my_package::my_module_tests {\n}\n\nThe #[test_only] annotation makes sure this module is not deployed when the package is published."
+    },
+    {
+      "codeSol": "#[test_only]\nmodule my_package::math_tests {\n    use my_package::math;\n\n    #[test]\n    fun test_add() {\n        assert!(math::add(1, 2) == 3, 0);\n    }\n}",
+      "quizType": "CODING",
+      "answers": [],
+      "lessonId": "2",
+      "codeDef": "",
+      "title": "Writing tests",
+      "quizTitle": "Exercise: given the following module:\n\n```\nmodule my_package::math {\n    public fun add(x: u64, y: u64): u64 {\n        x + y\n    }\n}\n```\n\nWrite a test module with a single test that verifies that add works correctly with one assertion that 1 + 2 is 3.",
+      "content": "A test module consists of helper functions and test functions. A test module can look like below:\n```\n#[test_only]\nmodule my_package::my_module_tests {\n    use std::string::{String, utf8};\n    use std::vector;\n\n    use my_package::my_module;\n\n    #[test]\n    fun my_test1() {\n        setup();\n        let my_struct = my_module::new_struct();\n        assert!(my_module.do_something(my_struct) == 0, 0);\n    }\n\n    #[test]\n    fun my_test2() {\n        setup();\n        let my_struct = MyStruct::new();\n        assert!(my_module.do_something(my_struct) == 0, 0);\n    }\n\n    fun setup() {\n        // setup code\n    }\n}\n```\nIn the example above, we have a helper setup function that is called at the start of each test. Note that Move doesn't have automatic setup functions so tests would need to do this manually.\nEach test is accompanied by a #[test] annotation so they will be run when developers execute a test run\n```\nsui move test\n```\nin the tests direction. Developers can additionally run `sui move test --coverage` to get a coverage report - how many % of the code is covered by the tests.\n\nTests can use assertion! statements to check the expected behavior of the code under test. assert! takes 2 arguments:\n- the first is a boolean expression that should evaluate to true if the test passes\n- the second is error message to help indicate which assertion failed in case there are many assertions in the test\n\nThere can be as many tests in the same module. The test module can also import any other modules. Note that everything written in the test module is not deployed to the blockchain so developers don't need to worry about security issues here/\nHelper functions can also be created in a separate test module that has no actual tests:\n```\n#[test_only]\nmodule my_package::test_helper {\n    public fun setup() {\n        // setup code\n    }\n}\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. #[testonly]",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. #[test-only]",
+          "isCorrect": false
+        },
+        {
+          "answer": "C. #[test_only]",
+          "isCorrect": true
+        }
+      ],
+      "lessonId": "3",
+      "codeDef": "",
+      "title": "Calling private functions in the tested module",
+      "quizTitle": "How do you the test only annotation?",
+      "content": "In some cases, developers might want to test private functions or to use a private function to create a private data structure. You can do this by making these private functions public(friend) and friending the test module in the tested module.\nHowever, giving a function higher visibility than necessary is not a good practice. Instead, you can use the #[test_only] attribute to allow a function to be called only from the test module. This attribute is only available in the test module and is not available in the production code.\n\n```\nmodule my_package::my_module {\n    fun private_function() {\n        // ...\n    }\n    \n    #[test_only]\n    fun call_private_function() {\n        private_function();\n    }\n}\n\nmodule my_package::my_module_tests {\n    use my_package::my_module;\n    \n    #[test]\n    fun test_private_function() {\n        my_module::call_private_function();\n        // ...\n    }\n}\n```\n\nA few other things to remember when writing tests:\n- #[test_only] functions are especially useful for calling init function of the tested module as init functions are not called by default when tests are run. They have to call explicitly.\n- Make sure to not mispell #[test_only] such as #[testonly] or #[test_onlyy] as this would make the functions non-test! This can be catastrophic if test code is deployed, for example a function to mint money.\nThis is caught by the compiler nowadays but it's still a good practice in general to make sure the annotations are correct.\n- Developers should not abuse #[test_only] functions if there's no need for them.\n- #[test_only] annocation can also be on imports if there are imports used in test only functions in the tested module. Without this, the compiler might warn there's an unused import."
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Because test_scenario is required for all tests",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. To set up all aspects of the system before tests run",
+          "isCorrect": true
+        },
+        {
+          "answer": "C. Because test_scenario makes tests run faster",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "4",
+      "codeDef": "",
+      "title": "Test scenario: Managing transactions",
+      "quizTitle": "Why is test_scenario needed",
+      "content": "If you recall objects, &mut TxContext and the tx_context module, you might ask how are these set up in tests. The answer is by default they aren't. This might lead to baffling failures when writing your tests as these tx_context is often used to create objects or determine the sender of the transaction.\nMove unit tests are run only with the Sui Move VM and does not include any other components of the blockchain. In order to make sure the tx context as well as other parts of the Sui system are functional, developers can use test_scenario:\n\n```\nuse sui::test_scenario::{Self, Scenario};\n\n#[test]\npublic fun my_test() {\n    let scenario_val = test_scenario::begin(@0x123);\n    let scenario = &mut scenario_val;\n\n    test_scenario::next_tx(scenario, @0x123);\n    // your test code here\n\n    test_scenario::end(scenario_val);\n}\n```\n\nThere are 3 functions to call from test_scenario throughout your test:\n- test_scenario::begin: This function initializes the test scenario and returns a Scenario object. This object is used to keep track of the state of the test scenario.\n- test_scenario::next_tx: This function is used to simulate a transaction. It takes a Scenario object and a sender address as arguments. This function is used to simulate a transaction from a specific sender.\n- test_scenario::end: This function is used to end the test scenario. It takes a Scenario object as an argument and cleans up the test scenario.\n\nWith these functions, everything your test needs should already be set up. In some cases, developers might go as far as making the transaction boundary of each block of test code explicit with blocks ({ ... }):\n```\n\n#[test]\nfun my_test {\n    // === Third transaction ===\n    // next transaction - Fran looks in her inventory and finds the book\n    // she decides to return it to Manny and buy another one herself\n    test_scenario::next_tx(&mut scenario, fran);\n    {\n        // objects can be taken from the sender by ID (if there's multiple)\n        // or if there's only one object: `take_from_sender<T>(&scenario)`\n        let book = test_scenario::take_from_sender_by_id<LittleBookOfCalm>(&scenario, book_id);\n        // send the book back to Manny\n        sui::transfer::transfer(book, manny);\n\n        // now repeat the same steps as before\n        let store = test_scenario::take_shared<BlackBooks>(&scenario);\n        let ctx = test_scenario::ctx(&mut scenario);\n        let coin = coin::mint_for_testing<SUI>(5_000_000_000, ctx);\n\n        // same as before - purchase the book\n        let book = purchase(&mut store, coin, ctx);\n        sui::transfer::transfer(book, fran);\n\n        // don't forget to return\n        test_scenario::return_shared(store);\n    };\n\n    // === Fourth transaction ===\n    // last transaction - Bernard collects the proceeds and transfers the store to Fran\n    test_scenario::next_tx(&mut scenario, bernard);\n    {\n        let store = test_scenario::take_shared<BlackBooks>(&scenario);\n        let cap = test_scenario::take_from_sender<StoreOwnerCap>(&scenario);\n        let ctx = test_scenario::ctx(&mut scenario);\n        let coin = collect(&mut store, &cap, ctx);\n\n        sui::transfer::public_transfer(coin, bernard);\n        sui::transfer::transfer(cap, fran);\n        test_scenario::return_shared(store);\n    };\n}\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Yes",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. No",
+          "isCorrect": true
+        }
+      ],
+      "lessonId": "5",
+      "codeDef": "",
+      "title": "Creating Objects - owned, shared, system",
+      "quizTitle": "Do you need to return owned objects borrowed via test_scenario::take_from_sender?",
+      "content": "In many cases, you also need to pass owned and shared objects when calling a tested function. But how do we get these objects? The Sui VM does this automatically when execution transactions, but this is in tests.\ntest_scenario provides a few functions to help with this:\n- test_scenario::take_shared: This function is used to take a shared object from the sender of the transaction. It takes a Scenario object as an argument and returns the shared object.\n```\nlet store = test_scenario::take_shared<BlackBooks>(&scenario);\n```\n- test_scenario::take_from_sender: This function is used to take an owned object from the sender of the transaction. It takes a Scenario object as an argument and returns the owned object.\n```\nlet cap = test_scenario::take_from_sender<StoreOwnerCap>(&scenario);\n```\nOne note here is that if you take shared objects, you need to return them at the end before ending the scenario:\n```\ntest_scenario::return_shared(store);\n```\n\nYou might also need to pass TxContext to the test function. This can be generated with test_scenario as well:\n```\nlet ctx = &mut tx_context::new_from_hint(\n    @0xC4AD,  // sender\n    0u64,     // hint, used to generate tx hash\n    1,        // epoch\n    0,        // epoch_timestamp_ms\n    0,        // `ids_created` (normally should be `0`)\n);\n```\nThrough this, you can also configure the different data return from the tx_context module:\n* sender\n* hint, used to generate tx hash\n* epoch\n* epoch timestamp, in milliseconds\n* number of object ids already created so far. Testing some functionality might need this.\n\nClock, the other system object, is a shared object so it can taken like that:\n```\nlet clock = test::take_shared<Clock>(&test);\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. When the test function doesn't error out",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. When the test function errors out with abort code of 1",
+          "isCorrect": true
+        },
+        {
+          "answer": "C. When the test function errors out with abort code of 2",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "6",
+      "codeDef": "",
+      "title": "Setting up SUI coins and Testing failing cases",
+      "quizTitle": "When does a test with #[expected_failure(abort_code = 1)] pass?",
+      "content": "# Creating SUI coins in tests\nSome tests might also need to create SUI coins when testing functions. This can be done via a #[test_only] function already defined in the coin module.\n```\nuse sui::coin;\n\n#[test]\npublic fun test() {\n    let coins = coin::mint_for_testing(1000);\n    // continue with the test\n}\n```\nFor custom coins, developers would need to have test_only functions defined in the modules where these Coins are initialized as a TreasuryCap is required to mint custom coins.\n\n# Failing cases\nWhen testing error cases, developers might want to write tests that expect a failure (e.g. the tested function correctly fails due to invalid inputs).\nThis can be done with the #[expected_failure] annotation\n```\n#[test]\n#[expected_failure(abort_code = kiosk::royalty_rule::EInsufficientAmount)]\nfun test_default_flow_0_invalid_amount_fail() {\n}\n```\nWe can use abort_code = to specify which abort code we expect to be returned by the test without having to hardcode. This is probably the closest we can get to public constants in Move for now. There might be updates in the near future to add support for public constants."
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Take b\"Hello\" and print it out as a string",
+          "isCorrect": true
+        },
+        {
+          "answer": "B. Print numbers - u8, u32, u64, etc.",
+          "isCorrect": false
+        },
+        {
+          "answer": "C. Print bools",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "7",
+      "codeDef": "",
+      "title": "Debugging",
+      "quizTitle": "What can't std::debug::print do?",
+      "content": "In unit tests, developers might need to know how to debug when the test fails. This can help with unexpected failures that are hard to debug.\nTo do this, normally developers want to print out different values at different places in the test to give them a better understanding of what is happening.\nYou can also do this in Move:\n\n```\n#[test]\nfun test_my_function() {\n    let a = 1;\n    let b = 2;\n    std::debug::print(&a);\n    std::debug::print(&b);\n    assert(a == b, 101);\n}\n```\nstd::debug::print takes references to any values and prints them out. Note that to print a string literal, you need to do the following:\n```\nstd::debug::print(&std::ascii::string(b\"Hello, world!\"));\n```\n\nstd::debug::print can also print an entire struct:\n```\nstruct MyStruct {\n    a: u64,\n    b: u64,\n}\n\n#[test]\nfun test_my_function() {\n    let my_struct = MyStruct { a: 1, b: 2 };\n    std::debug::print(&my_struct);\n}\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Loop through the list of test inputs and expected outputs, and run the tested function one for each combination",
+          "isCorrect": true
+        },
+        {
+          "answer": "B. Use native support built into Sui Move",
+          "isCorrect": false
+        },
+        {
+          "answer": "C. Use the annotation #[parameterized(inputs = ...",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "8",
+      "codeDef": "",
+      "title": "Writing parameterized tests",
+      "quizTitle": "How do you run parameterized tests?",
+      "content": "Parameterized tests are tests that are run multiple times with different input values. This is useful when you want to test a function with a range of different inputs, or when you want to test a function with a range of different expected outputs.\nUnit tests in Sui don't have native support for parameterized tests yet. To do this, we'll need to write some boilerplate code to run the same test multiple times with different input values.\n\n```\n#[test]\nfun test_add() {\n    assert_eq!(add(1, 2), 3);\n    assert_eq!(add(2, 2), 4);\n    assert_eq!(add(3, 2), 5);\n}\n```\ncan be rewritten as:\n```\n#[test]\nfun test_add() {\n    let test_cases = vector[(1, 2, 3), (2, 2, 4), (3, 2, 5)];\n    let i = 0;\n    while (i < vector::length(test_cases)) {\n        assert_eq!(add(a, b), expected);\n        i = i + 1;\n    }\n}\n```\n\nThis will become much easier with macro functions coming in Move soon.\n\n```\n#[test]\nfun test_add() {\n    let test_cases = vector[(1, 2, 3), (2, 2, 4), (3, 2, 5)];\n    vector::for_each(test_cases, |test_case| {\n        let (a, b, expected) = test_case;\n        assert_eq!(add(a, b), expected);\n    }\n}\n```"
+    },
+    {
+      "codeSol": "/// This module contains a dummy store implementation where anyone can purchase\n/// the same book for any amount of SUI greater than zero. The store owner can\n/// collect the proceeds using the `StoreOwnerCap` capability.\n///\n/// In the tests section, we use the `test_scenario` module to simulate a few\n/// transactions and test the store functionality. The test scenario is a very\n/// powerful tool which can be used to simulate multiple transactions in a single\n/// test.\n///\n/// The reference for this module is the \"Black Books\" TV series.\nmodule examples::black_books {\n    use sui::transfer;\n    use sui::sui::SUI;\n    use sui::coin::{Self, Coin};\n    use sui::object::{Self, UID};\n    use sui::balance::{Self, Balance};\n    use sui::tx_context::{Self, TxContext};\n\n    /// Trying to purchase the book for 0 SUI.\n    const ECantBeZero: u64 = 0;\n\n    /// A store owner capability. Allows the owner to collect proceeds.\n    struct StoreOwnerCap has key, store { id: UID }\n\n    /// The \"Black Books\" store located in London.\n    /// Only sells one book: \"The Little Book of Calm\".\n    struct BlackBooks has key {\n        id: UID,\n        balance: Balance<SUI>,\n    }\n\n    /// The only book sold by the Black Books store.\n    struct LittleBookOfCalm has key, store { id: UID }\n\n    /// Share the store object and transfer the store owner capability to the sender.\n    fun init(ctx: &mut TxContext) {\n        transfer::transfer(StoreOwnerCap {\n            id: object::new(ctx)\n        }, tx_context::sender(ctx));\n\n        transfer::share_object(BlackBooks {\n            id: object::new(ctx),\n            balance: balance::zero()\n        })\n    }\n\n    /// Purchase the \"Little Book of Calm\" for any amount of SUI greater than zero.\n    public fun purchase(\n        store: &mut BlackBooks, coin: Coin<SUI>, ctx: &mut TxContext\n    ): LittleBookOfCalm {\n        assert!(coin::value(&coin) > 0, ECantBeZero);\n        coin::put(&mut store.balance, coin);\n\n        // create a new book\n        LittleBookOfCalm { id: object::new(ctx) }\n    }\n\n    /// Collect the proceeds from the store and return them to the sender.\n    public fun collect(\n        store: &mut BlackBooks, _cap: &StoreOwnerCap, ctx: &mut TxContext\n    ): Coin<SUI> {\n        let amount = balance::value(&store.balance);\n        coin::take(&mut store.balance, amount, ctx)\n    }\n\n    // === Tests ===\n\n    #[test_only]\n    // The `init` is not run in tests, and normally a test_only function is\n    // provided so that the module can be initialized in tests. Having it public\n    // is important for tests located in other modules.\n    public fun init_for_testing(ctx: &mut TxContext) {\n        init(ctx);\n    }\n\n    // using a test-only attibute because this dependency can't be used in\n    // production code and `sui move build` will complain about unused imports.\n    //\n    // the `sui::test_scenario` module is only available in tests.\n    #[test_only] use sui::test_scenario;\n    #[test_only] use std::vector;\n    #[test_only] use sui::vec_map;\n\n    #[test]\n    // This test uses `test_scenario` to emulate actions performed by 3 accounts.\n    // A single scenario follows this structure:\n    //\n    // - `begin` - starts the first tx and creates the sceanario\n    // - `next_tx` ... - starts the next tx and sets the sender\n    // - `end` - wraps up the scenario\n    //\n    // It provides functions to start transactions, get the `TxContext, pull\n    // objects from account inventory and shared pool, and check transaction\n    // effects.\n    //\n    // In this test scenario:\n    // 1. Bernard opens the store;\n    // 2. Manny buys the book for 10 SUI and sends it to Fran;\n    // 3. Fran sends the book back and buys it herself for 5 SUI;\n    // 4. Bernard collects the proceeds and transfers the store to Fran;\n    fun the_book_store_drama() {\n        // it's a good idea to name addresses for readability\n        // Bernard is the store owner, Manny is searching for the book,\n        // and Fran is the next door store owner.\n        let (bernard, manny, fran) = (@0x1, @0x2, @0x3);\n\n        // create a test scenario with sender; initiates the first transaction\n        let scenario = test_scenario::begin(bernard);\n\n        // === First transaction ===\n\n        // run the module initializer\n        // we use curly braces to explicitly scope the transaction;\n        {\n            // `test_scenario::ctx` returns the `TxContext`\n            let ctx = test_scenario::ctx(&mut scenario);\n            init_for_testing(ctx);\n        };\n\n        // `next_tx` is used to initiate a new transaction in the scenario and\n        // set the sender to the specified address. It returns `TransactionEffects`\n        // which can be used to check object changes and events.\n        let prev_effects = test_scenario::next_tx(&mut scenario, manny);\n\n        // make assertions on the effects of the first transaction\n        let created_ids = test_scenario::created(&prev_effects);\n        let shared_ids = test_scenario::shared(&prev_effects);\n        let sent_ids = test_scenario::transferred_to_account(&prev_effects);\n        let events_num = test_scenario::num_user_events(&prev_effects);\n\n        assert!(vector::length(&created_ids) == 2, 0);\n        assert!(vector::length(&shared_ids) == 1, 1);\n        assert!(vec_map::size(&sent_ids) == 1, 2);\n        assert!(events_num == 0, 3);\n\n        // === Second transaction ===\n\n        // we will store the `book_id` in a variable so we can use it later\n        let book_id = {\n            // test scenario can pull shared and sender-owned objects\n            // here we pull the store from the pool\n            let store = test_scenario::take_shared<BlackBooks>(&scenario);\n            let ctx = test_scenario::ctx(&mut scenario);\n            let coin = coin::mint_for_testing<SUI>(10_000_000_000, ctx);\n\n            // call the purchase function\n            let book = purchase(&mut store, coin, ctx);\n            let book_id = object::id(&book);\n\n            // send the book to Fran\n            sui::transfer::transfer(book, fran);\n\n            // now return the store to the pool\n            test_scenario::return_shared(store);\n\n            // return the book ID so we can use it across transactions\n            book_id\n        };\n\n        // === Third transaction ===\n\n        // next transaction - Fran looks in her inventory and finds the book\n        // she decides to return it to Manny and buy another one herself\n        test_scenario::next_tx(&mut scenario, fran);\n        {\n            // objects can be taken from the sender by ID (if there's multiple)\n            // or if there's only one object: `take_from_sender<T>(&scenario)`\n            let book = test_scenario::take_from_sender_by_id<LittleBookOfCalm>(&scenario, book_id);\n            // send the book back to Manny\n            sui::transfer::transfer(book, manny);\n\n            // now repeat the same steps as before\n            let store = test_scenario::take_shared<BlackBooks>(&scenario);\n            let ctx = test_scenario::ctx(&mut scenario);\n            let coin = coin::mint_for_testing<SUI>(5_000_000_000, ctx);\n\n            // same as before - purchase the book\n            let book = purchase(&mut store, coin, ctx);\n            sui::transfer::transfer(book, fran);\n\n            // don't forget to return\n            test_scenario::return_shared(store);\n        };\n\n        // === Fourth transaction ===\n\n        // last transaction - Bernard collects the proceeds and transfers the store to Fran\n        test_scenario::next_tx(&mut scenario, bernard);\n        {\n            let store = test_scenario::take_shared<BlackBooks>(&scenario);\n            let cap = test_scenario::take_from_sender<StoreOwnerCap>(&scenario);\n            let ctx = test_scenario::ctx(&mut scenario);\n            let coin = collect(&mut store, &cap, ctx);\n\n            sui::transfer::public_transfer(coin, bernard);\n            sui::transfer::transfer(cap, fran);\n            test_scenario::return_shared(store);\n        };\n\n        // finally, the test scenario needs to be finalized\n        test_scenario::end(scenario);\n    }\n}",
+      "quizType": "CODING",
+      "answers": [],
+      "lessonId": "9",
+      "codeDef": "/// This module contains a dummy store implementation where anyone can purchase\n/// the same book for any amount of SUI greater than zero. The store owner can\n/// collect the proceeds using the `StoreOwnerCap` capability.\n///\n/// In the tests section, we use the `test_scenario` module to simulate a few\n/// transactions and test the store functionality. The test scenario is a very\n/// powerful tool which can be used to simulate multiple transactions in a single\n/// test.\n///\n/// The reference for this module is the \"Black Books\" TV series.\nmodule examples::black_books {\n    use sui::transfer;\n    use sui::sui::SUI;\n    use sui::coin::{Self, Coin};\n    use sui::object::{Self, UID};\n    use sui::balance::{Self, Balance};\n    use sui::tx_context::{Self, TxContext};\n\n    /// Trying to purchase the book for 0 SUI.\n    const ECantBeZero: u64 = 0;\n\n    /// A store owner capability. Allows the owner to collect proceeds.\n    struct StoreOwnerCap has key, store { id: UID }\n\n    /// The \"Black Books\" store located in London.\n    /// Only sells one book: \"The Little Book of Calm\".\n    struct BlackBooks has key {\n        id: UID,\n        balance: Balance<SUI>,\n    }\n\n    /// The only book sold by the Black Books store.\n    struct LittleBookOfCalm has key, store { id: UID }\n\n    /// Share the store object and transfer the store owner capability to the sender.\n    fun init(ctx: &mut TxContext) {\n        transfer::transfer(StoreOwnerCap {\n            id: object::new(ctx)\n        }, tx_context::sender(ctx));\n\n        transfer::share_object(BlackBooks {\n            id: object::new(ctx),\n            balance: balance::zero()\n        })\n    }\n\n    /// Purchase the \"Little Book of Calm\" for any amount of SUI greater than zero.\n    public fun purchase(\n        store: &mut BlackBooks, coin: Coin<SUI>, ctx: &mut TxContext\n    ): LittleBookOfCalm {\n        assert!(coin::value(&coin) > 0, ECantBeZero);\n        coin::put(&mut store.balance, coin);\n\n        // create a new book\n        LittleBookOfCalm { id: object::new(ctx) }\n    }\n\n    /// Collect the proceeds from the store and return them to the sender.\n    public fun collect(\n        store: &mut BlackBooks, _cap: &StoreOwnerCap, ctx: &mut TxContext\n    ): Coin<SUI> {\n        let amount = balance::value(&store.balance);\n        coin::take(&mut store.balance, amount, ctx)\n    }\n\n    // === Tests ===\n\n    #[test_only]\n    // The `init` is not run in tests, and normally a test_only function is\n    // provided so that the module can be initialized in tests. Having it public\n    // is important for tests located in other modules.\n    public fun init_for_testing(ctx: &mut TxContext) {\n        init(ctx);\n    }\n\n    // using a test-only attibute because this dependency can't be used in\n    // production code and `sui move build` will complain about unused imports.\n    //\n    // the `sui::test_scenario` module is only available in tests.\n    #[test_only] use sui::test_scenario;\n    #[test_only] use std::vector;\n    #[test_only] use sui::vec_map;\n\n    #[test]\n    // This test uses `test_scenario` to emulate actions performed by 3 accounts.\n    // A single scenario follows this structure:\n    //\n    // - `begin` - starts the first tx and creates the sceanario\n    // - `next_tx` ... - starts the next tx and sets the sender\n    // - `end` - wraps up the scenario\n    //\n    // It provides functions to start transactions, get the `TxContext, pull\n    // objects from account inventory and shared pool, and check transaction\n    // effects.\n    //\n    // In this test scenario:\n    // 1. Bernard opens the store;\n    // 2. Manny buys the book for 10 SUI and sends it to Fran;\n    // 3. Fran sends the book back and buys it herself for 5 SUI;\n    // 4. Bernard collects the proceeds and transfers the store to Fran;\n    fun the_book_store_drama() {\n        // it's a good idea to name addresses for readability\n        // Bernard is the store owner, Manny is searching for the book,\n        // and Fran is the next door store owner.\n        let (bernard, manny, fran) = (@0x1, @0x2, @0x3);\n\n        // create a test scenario with sender; initiates the first transaction\n        let scenario = test_scenario::begin(bernard);\n\n        // === First transaction ===\n\n        // run the module initializer\n        // we use curly braces to explicitly scope the transaction;\n        {\n            // `test_scenario::ctx` returns the `TxContext`\n            let ctx = test_scenario::ctx(&mut scenario);\n            init_for_testing(ctx);\n        };\n\n        // `next_tx` is used to initiate a new transaction in the scenario and\n        // set the sender to the specified address. It returns `TransactionEffects`\n        // which can be used to check object changes and events.\n        let prev_effects = test_scenario::next_tx(&mut scenario, manny);\n\n        // make assertions on the effects of the first transaction\n        let created_ids = test_scenario::created(&prev_effects);\n        let shared_ids = test_scenario::shared(&prev_effects);\n        let sent_ids = test_scenario::transferred_to_account(&prev_effects);\n        let events_num = test_scenario::num_user_events(&prev_effects);\n\n        assert!(vector::length(&created_ids) == 2, 0);\n        assert!(vector::length(&shared_ids) == 1, 1);\n        assert!(vec_map::size(&sent_ids) == 1, 2);\n        assert!(events_num == 0, 3);\n\n        // === Second transaction ===\n\n        // we will store the `book_id` in a variable so we can use it later\n        let book_id = {\n            // test scenario can pull shared and sender-owned objects\n            // here we pull the store from the pool\n            let store = test_scenario::take_shared<BlackBooks>(&scenario);\n            let ctx = test_scenario::ctx(&mut scenario);\n            let coin = coin::mint_for_testing<SUI>(10_000_000_000, ctx);\n\n            // call the purchase function\n            let book = purchase(&mut store, coin, ctx);\n            let book_id = object::id(&book);\n\n            // send the book to Fran\n            sui::transfer::transfer(book, fran);\n\n            // now return the store to the pool\n            test_scenario::return_shared(store);\n\n            // return the book ID so we can use it across transactions\n            book_id\n        };\n\n        // === Third transaction ===\n\n        // next transaction - Fran looks in her inventory and finds the book\n        // she decides to return it to Manny and buy another one herself\n        test_scenario::next_tx(&mut scenario, fran);\n        {\n            // objects can be taken from the sender by ID (if there's multiple)\n            // or if there's only one object: `take_from_sender<T>(&scenario)`\n            let book = test_scenario::take_from_sender_by_id<LittleBookOfCalm>(&scenario, book_id);\n            // send the book back to Manny\n            sui::transfer::transfer(book, manny);\n\n            // now repeat the same steps as before\n            let store = test_scenario::take_shared<BlackBooks>(&scenario);\n            let ctx = test_scenario::ctx(&mut scenario);\n            let coin = coin::mint_for_testing<SUI>(5_000_000_000, ctx);\n\n            // same as before - purchase the book\n            let book = purchase(&mut store, coin, ctx);\n            sui::transfer::transfer(book, fran);\n\n            // don't forget to return\n            test_scenario::return_shared(store);\n        };\n\n        // === Fourth transaction ===\n\n        // last transaction - Bernard collects the proceeds and transfers the store to Fran\n        test_scenario::next_tx(&mut scenario, bernard);\n        {\n            let store = test_scenario::take_shared<BlackBooks>(&scenario);\n            let cap = test_scenario::take_from_sender<StoreOwnerCap>(&scenario);\n            let ctx = test_scenario::ctx(&mut scenario);\n            let coin = collect(&mut store, &cap, ctx);\n\n            sui::transfer::public_transfer(coin, bernard);\n            sui::transfer::transfer(cap, fran);\n            test_scenario::return_shared(store);\n        };\n\n        // finally, the test scenario needs to be finalized\n        test_scenario::end(scenario);\n    }\n}",
+      "title": "Summary",
+      "quizTitle": "No Quiz. Here's a complete test might look like:",
+      "content": "In summary, unit tests can be easily written in Move:\n- In a separate file/module\n- Start with #[test_only]\n- Can use test_scenario to have all context set up as if the code is executed from a transaction\n- Can take owned and shared objects to call tested functions. Shared objects have to be returned before test_scenario ends or next (test) transaction begins\n- Can create system objects - TxContext and Clock\n- Can validate that an abort happens with the specified error code when the tested function is called\n- Can be parameterized, for now with some boilerplate code\n\n"
+    }
+  ],
+  "title": "Unit testing"
+}

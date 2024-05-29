@@ -1,0 +1,182 @@
+{
+  "curStatus": "ready",
+  "description": "",
+  "id": "7",
+  "lesson": [
+    {
+      "codeSol": "public fun split(s: String): vector<String> {\n    let result = vector[];\n    let delimiter = string::utf8(b\",\");\n    let len = string::length(s);\n    while (string::index_of(s, delimiter) < len) {\n        let i = string::index_of(s, delimiter);\n        let part = string::sub_string(s, 0, i);\n        result.push(part);\n        s = string::sub_string(s, i + 1, len);\n    };\n    result\n}",
+      "quizType": "CODING",
+      "answers": [],
+      "lessonId": "1",
+      "codeDef": "public fun split(s: String): vector<String> {\n    // ...\n}",
+      "title": "String",
+      "quizTitle": "Split a string with \",\" as the delimiter\nHint: Use index_of and a while loop",
+      "content": "Strings are not technically a primitive type in Move but are implemented as a module in the standard library. Strings, different from other structs, come with a lot of support from the VM and API. Strings can be passed as-is as a transaction argument, via the SDK, and behind the scene, it will be properly serialized/deserialized into the String struct.\nFunctions in Move can directly accept a String argument:\n```\npublic fun do_something(s: String) {\n    // ...\n}\n```\n\nIn Move, since String is not a primitive type, it has no direct literal syntax. Instead, you can create a string using the `utf8` function from the `string` module:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\n```\nb\"Hello, World!\" is a byte array literal (vector<u8>), and the `utf8` function converts it into a string. The `utf8` function will error out if the byte array is not a valid UTF-8 string.\n\nStrings cannot be directly be set as a constant since constant expressions do not support function calls. You'd need to assign to the constant the bytes value first before converting it into a string:\n```\nconst HELLO_WORLD: vector<u8> = b\"Hello, World!\";\npublic fun hello_world(): String {\n    std::string::utf8(HELLO_WORLD)\n}\n```\nThis will create a UTF-8 string.\n\nMove also supports ASCII strings, which is a different module:\n```\nlet s = std::ascii::from_asciistring(b\"Hello, World!\");\n```\nHowever, UTF-8 strings are more commonly used and ASCII strings are much rarer.\n\nStrings are mutable. You can also append strings together:\n```\nlet s1 = std::string::utf8(b\"Hello, \");\nlet s2 = std::string::utf8(b\"World!\");\nstd::string::append(&mut s1, s2);\n```\n\nOr take a substring:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet sub = std::string::sub_string(&s, 0, 5);\n```\n\nYou can also insert a string into another string at a specific index:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet s2 = std::string::utf8(b\"Brave \");\nstd::string::insert(&mut s, 7, s2);\n```\n\nYou can also find the index of a substring:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet s2 = std::string::utf8(b\"World\");\nlet index = std::string::index_of(&s, &s2);\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Optional arguments to a function",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. Optional fields in a struct",
+          "isCorrect": false
+        },
+        {
+          "answer": "C. Optional type arguments for a function",
+          "isCorrect": true
+        }
+      ],
+      "lessonId": "2",
+      "codeDef": "",
+      "title": "Option",
+      "quizTitle": "What should Option not be used for?",
+      "content": "The Option type is a common pattern in Rust and other languages. It is used to represent a value that may or may not be present. In Move, the Option type is implemented using a vector of size zero or one element.\nOptions are useful for:\n1. Optional arguments that are passed to functions\n2. Optional fields in structs\n3. Optional return values from functions\n\nThe Option type is defined in the std::option module. The Option type is a generic type, meaning it can hold any type of value. The Option type has two variants: Some and None. The Some variant holds a value, while the None variant does not hold a value.\nAn optional value can be created with:\n```\nlet absent = option::none();\nlet some_value = option::some(42);\n```\nOptions can be used on both primitive and structs:\n```\nstruct MyStruct {\n    value: u64\n}\nlet some_struct = option::some(MyStruct{value: 42});\nlet value = option::borrow(&some_struct).value;\n```\n\nThe Option type has several methods to work with optional values:\n\nis_none: returns true if the Option is None\n```\nlet absent = option::none();\nassert!(option::is_none(&absent), 0);\n```\n\nis_some: returns true if the Option is Some\n```\nlet some_value = option::some(42);\nassert!(option::is_some(&some_value), 0);\n```\n\ncontains: returns true if the Option contains a specific value\n```\nlet some_value = option::some(42);\nassert!(option::contains(&some_value, &42), 0);\n```\n\nA value can be read from an Option. This will abort if the Option is None:\n```\nlet some_value = option::some(42);\nlet value = option::borrow(&some_value);\n```\n\nA value can be read from an Option with a default value if the Option is None:\n```\nlet absent = option::none();\nlet value = option::borrow_with_default(&absent, &42);\n```\n\nA mutable reference to the value can be obtained from the Option and used to modify the value:\n```\nlet some_value = option::some(42);\nlet value = option::borrow_mut(&some_value);\n*value = 43;\n```\n\nThe value inside an Option can be replaced with a new value:\n```\nlet some_value = option::some(42);\nlet old_value = option::swap(&some_value, 43);\n```\n\nValues can also be filled in or extracted from an Option:\n```\nlet absent = option::none();\noption::fill(&absent, 42);\nlet value = option::extract(&absent);\n```\n\nThe Option type can be destroyed and its value extracted:\n```\nlet some_value = option::some(42);\nlet value = option::destroy_some(some_value);\n```"
+    },
+    {
+      "codeSol": "public fun get_rand_number(ctx: &mut TxContext): u64 {\n    let id = fresh_object_address(ctx);\n    let epoch = epoch(ctx);\n    let timestamp = epoch_timestamp_ms(ctx);\n    let rand = (id + epoch + timestamp) % 100;\n    rand\n}",
+      "quizType": "CODING",
+      "answers": [],
+      "lessonId": "3",
+      "codeDef": "public fun get_rand_number(ctx: &mut TxContext): u64 {\n    // Implement\n}",
+      "title": "Transaction context",
+      "quizTitle": "Exercise: Use unique_id generated from fresh_object_address and epoch timestamp to generate random value",
+      "content": "As we have seen in previous courses on objects and more advanced Move, transaction context (tx_context) is useful for many things:\n1. Create new objects. This requires a mutable tx_context\n2. Access the sender of the transaction\nTx_context is considered a special system object and automatically passed to a function:\n```\npublic fun my_function(ctx: &mut TxContext) {\n    let sender = ctx.sender();\n    let new_object = object::new(ctx);\n}\n```\nWhen calling my_function, the sender doesn't need to explicitly pass tx_context. It's automatically appended by the VM when the transaction is executed. This is also why transaction context should always be the last argument in a function signature.\n```\npublic fun my_function(arg1: u64, arg2: u64, ctx: &mut TxContext) {\n    // ...\n}\n```\n\nYou'd also see some library functions or functions from someone else's contract you might depend on requiring a transaction context. In most cases, this is for creating objects inside those functions.\nThere are other useful transaction context functions you can use:\n- `ctx.epoch()` returns the current epoch number\n```\nlet epoch = tx_context::epoch(ctx);\n```\nThe Sui blockchain is organized into non-overlapping epochs, each 24 hours long.\n\n- `ctx.epoch_timestamp_ms()` returns the start time of the current epoch in milliseconds since the Unix epoch\n```\nlet epoch_start = tx_context::epoch_timestamp_ms(ctx);\n```\n\n- `ctx.fresh_object_address()` returns a new, unique object address. This is useful for creating new objects.\n```\nlet new_object = object::new(ctx);\n```\nNote that this unique object address can be used as a unique id even for items that are not objects. These ids are guaranteed to be unique across all transactions and all objects.\n\n- `ctx.digest()` returns the hash of the current transaction. This is useful for creating deterministic randomness.\n```\nlet random_number = std::hash::digest(ctx.digest());\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. 2.5 in fixed_point32",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. 3",
+          "isCorrect": false
+        },
+        {
+          "answer": "C. 2",
+          "isCorrect": true
+        }
+      ],
+      "lessonId": "4",
+      "codeDef": "",
+      "title": "Math and fixed_point32",
+      "quizTitle": "What is the result of 5 / 2 in Move?",
+      "content": "# Math\nThe math module provides useful math functions for working with unsigned integers in Move. This is different from the EVM world where users need to deploy their own math libraries.\n\nThe math module provides the following functions:\n- max: Return the larger of x and y\n```\nlet max = math::max(5, 10);\nassert!(max == 10, 0);\n```\n\n- min: Return the smaller of x and y\n```\nlet min = math::min(5, 10);\nassert!(min == 5, 0);\n```\n\n- diff: Return the absolute value of x - y\n```\nlet diff = math::diff(5, 10);\nassert!(diff == 5, 0);\n```\n\n- pow: Return the value of a base raised to a power\n```\nlet pow = math::pow(2, 3);\nassert!(pow == 8, 0);\n```\n\n- sqrt: Get a nearest lower integer Square Root for x\n```\nlet sqrt = math::sqrt(9);\nassert!(sqrt == 3, 0);\n```\n\n- sqrt_u128: Similar to math::sqrt, but for u128 numbers\n```\nlet sqrt = math::sqrt_u128(9);\nassert!(sqrt == 3, 0);\n```\n\n- divide_and_round_up: Calculate x / y, but round up the result\n```\nlet divide_and_round_up = math::divide_and_round_up(5, 2);\nassert!(divide_and_round_up == 3, 0);\n```\n\n# fixed_point32\nMove doesn't have native floating point numbers. All numbers are unsigned integers. This can make it hard to implement sophisticated math calculations such as in Defi protocols.\nThe standard libraries in Sui Move however provides a Move-based implementation of fixed-point numbers with 32 fractional bits. This is a binary representation, so decimal values may not be exactly representable, but it provides more than 9 decimal digits of precision both before and after the decimal point (18 digits total). For comparison, double precision floating-point has less than 16 decimal digits of precision, so be careful about using floating-point to convert these values to decimal.\nThis however comes with extra gas cost due to Move expressions vs a native implementation in Rust in the Move language.\nCurrently only fixed point numbers with 32 bits on the fractional and integer part are supported.\n\nTo create a fixed point number:\n```\nlet one_half = fixed_point32::create_from_rational(1, 2);\nlet two = fixed_point32::create_from_raw_value(2);\n```\n\nTo perform arithmetic operations on fixed point numbers:\n```\nlet sum = fixed_point32::add(one_half, two);\nlet product = fixed_point32::multiply(one_half, two);\nlet quotient = fixed_point32::divide(one_half, two);\n```\n\nTo convert a fixed point number to a u64:\n```\nlet value = fixed_point32::get_raw_value(one_half);\n```\n\nTo check if a fixed point number is zero:\n```\nlet is_zero = fixed_point32::is_zero(one_half);\n```"
+    },
+    {
+      "codeSol": "public fun deserialize(bytes: vector<u8>): Info {\n    use sui::bcs::{Self, BCS};\n\n    let prepared: BCS = bcs::new(bytes);\n    let (a, b, c, d, k, s) = (\n        bcs::peel_bool(&mut prepared),\n        bcs::peel_u8(&mut prepared),\n        bcs::peel_u64(&mut prepared),\n        bcs::peel_u128(&mut prepared),\n        bcs::peel_vec_bool(&mut prepared),\n        bcs::peel_address(&mut prepared)\n    );\n\n    Info { a, b, c, d, k, s }\n}",
+      "quizType": "CODING",
+      "answers": [],
+      "lessonId": "5",
+      "codeDef": "public fun deserialize(bytes: vector<u8>): Info {\n    // your code here\n}",
+      "title": "BCS",
+      "quizTitle": "Exercise: Write a function that can extract the values to reconstruct a given struct from BCS bytes:\n```\nstruct Info {\n    a: bool,\n    b: u8,\n    c: u64,\n    d: u128,\n    k: vector<bool>,\n    s: address\n}\n```\n\nThe function should take a vector of bytes and return the struct.",
+      "content": "Not to be confused with the bcs module from std::bcs, this lesson covers the sui::bcs module, which has a lot more functionalities.\nBCS is the default serialization format for Sui and Move. It is a binary format that is used to serialize data for storage and transmission. The BCS format is used to serialize data for storage and transmission.\nWhen values are passed as arguments in a transaction, they're serialized into BCS format. When the transaction is executed, the values are deserialized from BCS format into actual values in Move. This serialization and deserialization come with a cost for the Sui blockchain that developers should be mindful of.\nBy default, transactions cannot take non-object structs as arguments with the exception of Strings.\n\nThe BCS module can provide a workaround for this allowing developers to pass a struct-like values as a series of BCS-encoded bytes and the Move code can extract the values one by one as long as they're all of primitive types or vectors or options. This allows the FE to serialize a struct (which just generates a sequence of values, one after another) and the sequence of values can be extracted from the bytes one at a time:\n\n```\n/// This function reads u8 and u64 value from the input\nuse sui::bcs;\n\npublic fun deserialize(bytes: vector<u8>): (u8, u64) {\n    let prepared = bcs::new(bytes);\n    let (u8_value, u64_value) = (\n        bcs::peel_u8(&mut prepared),\n        bcs::peel_u64(&mut prepared)\n    );\n\n    (u8_value, u64_value)\n}\n```\n\nVectors can be extracted (or \"peeled\") similarly:\n```\npublic fun deserialize(bytes: vector<u8>): vector<u8> {\n    let prepared = bcs::new(bytes);\n    let u8_vector = bcs::peel_vec_u8(&mut prepared);\n    let u64_vector = bcs::peel_vec_u64(&mut prepared);\n\n    u8_vector\n}\n```\n\nOptions:\n```\npublic fun deserialize(bytes: vector<u8>): Option<u8> {\n    let prepared = bcs::new(bytes);\n    let u8_option = bcs::peel_option_u8(&mut prepared);\n    let u64_option = bcs::peel_option_u64(&mut prepared);\n\n    u8_option\n}\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. They require a lot of operations",
+          "isCorrect": true
+        },
+        {
+          "answer": "B. They require users to pay a deposit",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "6",
+      "codeDef": "",
+      "title": "Cryptography libraries",
+      "quizTitle": "Why are cryptography functions expensive gas-wise?",
+      "content": "Sui Move offers many cryptography functions that allow many different use cases:\n- bls12381: BLS12-381 signature verification. This can be used for verifying bls12381 signatures. BLS signatures are generally more efficient to verify than ECDSA signatures.\n- ed25519: Ed25519 signature verification. This is the default signature/keypair scheme in Sui.\n- ecdsa_k1 or sep256k1: secp256k1 signature verification. This is the signature scheme used in Bitcoin.\n- ecdsa_r1 or secp256r1: secp256r1 signature verification. This is the signature scheme used in Ethereum and other EVM chains.\n- blake2b (sui::hash module): Blake2b hashing. This is a fast and secure hashing algorithm.\n- keccak256 (sui::hash module): Keccak256 hashing. This is the hashing algorithm used in Ethereum.\n- groth16: Groth16 proof verification. This is used for zero-knowledge proof.\n\nUsing these functions allow developers to build secure and efficient applications on Sui as well as applications that can interop with signatures or proofs generated from other blockchains such as Ethereum.\n```\npublic fun verify_ethereum_signature(\n    signature: vector<u8>,\n    public_key: vector<u8>,\n    msg: vector<u8>,\n    hash: u8,\n): bool {\n    sui::ecdsa_r1::secp256r1_verify(&signature, &public_key, &msg, hash)\n}\n\nIn most flows involving cryptography functions, developers can write functions that take in a signed message or proof along with other params required that are specific to each cryptography mechanism. Then the Move code can do the verification on chain, guaranteeing correctness and decentralization.\nNote that cryptography functions can cost a lot of gas as they require a lot of computation behind the scene, implemented as native functions in Rust. Developers should avoid writing functions that do a lot of verifications."
+    },
+    {
+      "codeSol": "public fun withdraw<CoinType>(coin: CoinType) {\n    let type_name = std::type_name::get<CoinType>();\n    if (type_name == string::utf8(\"0x123::my_module::Coin1\")) {\n        // Withdraw Coin1\n    } else if (type_name == string::utf8(\"0x123::my_module::Coin2\")) {\n        // Withdraw Coin2\n    } else if (type_name == string::utf8(\"0x123::my_module::Coin3\")) {\n        // Withdraw Coin3\n    } else {\n        // Unknown coin type\n    }\n}",
+      "quizType": "CODING",
+      "answers": [],
+      "lessonId": "7",
+      "codeDef": "public fun withdraw<CoinType>(coin: CoinType) {\n    // Implement\n}",
+      "title": "Type name",
+      "quizTitle": "Exercise: Given the following 3 coin types and assuming they're deployed at a module located at 0x123, write a function that withdraw these different coins from the user's account:\n```\nmodule 0x123::my_module {\n    struct Coin1 {}\n    struct Coin2 {}\n    struct Coin3 {}\n}\n```\nYou don't need to write the withdraw logic. Just leave a comment in each case similar to // Withdraw Coin1",
+      "content": "Types in Move, defined as structs, contain 3 components:\n- Module address: the address of the module that defined the type\n- Module name: the name of the module that defined the type\n- Type name: the name of the struct\n\nTypes in Move are also passed as type arguments between functions. In some cases, developers might want to inspect the types in order to apply different logic.\nThis is where type_name module comes in. It provides a way to convert Move types into values. This is useful for debugging, logging, and other use cases where the type of a value needs to be inspected at runtime.\n```\n// Example usage\npublic fun process<T>(val: T) {\n    let type_name = type_name::get<T>();\n    let type_name_str = type_name::into_string(type_name);\n    if (type_name_str == utf8(b\"0xdeadbeef::my_module::MyStruct\")) {\n        // do something\n    } else if (type_name_str == \"0xdeadbeef::my_module::MyOtherStruct\") {\n        // do something else\n    } else {\n        abort 0;\n    }\n}\n```\n\nThe different components can be extracted from a type as well:\n```\nlet type_name = type_name::get<T>();\nlet module_name = type_name::get_module(&type_name);\nlet address = type_name::get_address(&type_name);\n```\n\nType name should be used with caution as comparing type names is not a reliable way to determine the type of a value. It is recommended to use Move's type system to determine the type of a value whenever possible."
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. Url has validation that the provided string is a valid url",
+          "isCorrect": false
+        },
+        {
+          "answer": "B. Url is more explicit and indicates to developers that a valid url is expected. No validation is performed",
+          "isCorrect": true
+        },
+        {
+          "answer": "C. Url is more gas efficient",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "8",
+      "codeDef": "",
+      "title": "Url",
+      "quizTitle": "Why should developers use Url instead of String",
+      "content": "Url is a convenient type provided in the Sui Move libraries to explicitly mark a field in a struct or a function's argument as a URL. This is useful for the Move language to understand the type of the field and to provide better error messages when the field is used incorrectly.\nDevelopers should use store values as Urls or accept Urls arguments where possible. Note that transactions cannot pass Urls as arguments, so Url should only be used as arguments for functions that are not directly called by users.\n\n```\nstruct MyStruct {\n    url: Url,\n}\n\npublic fun take_url(url: Url) {\n    // ...\n}\n```\n\nUrl can be created using the new_unsafe function, which takes a string as an argument. This function does not validate the string, so it is the responsibility of the developer to ensure that the string is a valid URL. The new_unsafe_from_bytes function can also be used to create a Url from a vector of bytes. This function will abort if the bytes are not valid ASCII.\n```\nuse 0x1::sui::url;\n\npublic fun main() {\n    let url = url::new_unsafe(\"https://example.com\");\n    let url_bytes = vector::from_hex(\"68747470733a2f2f6578616d706c652e636f6d\");\n    let url_from_bytes = url::new_unsafe_from_bytes(url_bytes);\n}\n```\n\nThe inner_url function can be used to get the inner URL from a Url as a String. The update function can be used to update the inner URL of a Url.\n```\nuse 0x1::sui::url;\nlet url = url::new_unsafe(\"https://example.com\");\nlet inner_url = url::inner_url(&url);\n```\n\nA Url can be updated using the update function. This function takes a mutable reference to the Url and a string as arguments. The string will replace the inner URL of the Url.\n```\nuse 0x1::sui::url;\nlet url = url::new_unsafe(\"https://example.com\");\nurl::update(&mut url, \"https://example.org\");\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "A. id, version number and inner value type",
+          "isCorrect": true
+        },
+        {
+          "answer": "B. id and version number",
+          "isCorrect": false
+        },
+        {
+          "answer": "C. Just the version number",
+          "isCorrect": false
+        }
+      ],
+      "lessonId": "9",
+      "codeDef": "",
+      "title": "Managing versions with versioned",
+      "quizTitle": "What are the fields inside a Versioned object?",
+      "content": "Similar to Url, versioned is a convenient library to provide explicit version management. Developers can use raw version numbers (e.g. u64), but versioned is more explicit and self-documenting.\nversioned can be used to manage versions of objects, an application's data or basically anything else.\nA Versioned is an actual object that can be transferred to accounts or kept inside (wrapped or via dynamic fields) of another object.\nA Versioned can also store the actual value inside itself instead of the value being a separate object, which is a more common use case.\n\nTo create a new Versioned object, use the create function. The initial version and value are required. The value must be a store type.\n```\nlet v = versioned::create(1, b\"hello\", &mut ctx);\n```\n\nTo get the current version of the inner type, use the version function.\n```\nlet ver = versioned::version(&v);\n```\n\nTo load the inner value based on the current version, use the load_value function. Caller specifies an expected type T. If the type mismatch, the load will fail.\n```\nlet val = versioned::load_value(&v);\n```\n\nTo take the inner object out for upgrade, use the remove_value_for_upgrade function. To ensure we always upgrade properly, a capability object is returned and must be used when we upgrade.\n```\nlet (val, cap) = versioned::remove_value_for_upgrade(&mut v);\n```\n\nTo upgrade the inner object with a new version and new value, use the upgrade function. Must use the capability returned by calling remove_value_for_upgrade.\n```\nversioned::upgrade(&mut v, 2, b\"world\", cap);\n```\n\nTo destroy this Versioned container, and return the inner object, use the destroy function.\n```\nlet val = versioned::destroy(v);\n```"
+    },
+    {
+      "codeSol": "",
+      "quizType": "ANSWERS",
+      "answers": [
+        {
+          "answer": "u64, vector, Option, String ",
+          "isCorrect": false
+        },
+        {
+          "answer": "u8, u32, bool, all structs",
+          "isCorrect": false
+        },
+        {
+          "answer": "u8, u32, bool, String",
+          "isCorrect": true
+        }
+      ],
+      "lessonId": "10",
+      "codeDef": "",
+      "title": "Summary",
+      "quizTitle": "Which types can be passed arguments in a transaction?",
+      "content": "In this course, we have covered many standard libraries provided by the Sui framework. These libraries cover extra types such as `String`, `Option`, `FixedPoint32`. There are also math libraries and other libraries that help developers write safe and easy to understand code in Move.\n\nMost of the libraries can be found under `std::`, with some exceptions such as `bcs`, `url`, or `versioned` under `sui::`. When writing Move code, developers should use the provided libraries as much as possible, because:\n1. They are written in an efficient way and might receive more optimizations later such as conversion into native Rust code that's even more efficient than Move.\n2. They have been extensively tested, audited, and battle-tested. This ensures that small mistakes are not made that can lead to hard to debug issues.\n\nWe covered the following libraries and their use cases:\n1. `String` - a semi-primitive type that's technically a struct but can be freely passed to functions as arguments as part of a transaction\n2. `Option` - an accessory type provided to represent optional values. Cannot be passed via transactions\n3. `FixedPoint32` - a number type useful for representing fractional numbers in Move as Move doesn't have native support for them. Cannot be passed via transactions\n4. `Transaction` context - a system object automatically passed to a function as a last argument if the function requires it. Useful for getting information about the transaction such as sender/digest or querying system states - current epoch, timestamp or for generating a unique id.\n5. `Math` - useful math functions\n6. `BCS` - Can be used to pass structs as bytes array (vector<u8>) as Sui doesn't by default allow passing custom structs as arguments. The receiving function will need to manually extract values one by one from the given bytes vector.\n7. `Cryptography` functions - Useful for verifying signed messages (with different schemes) or zero knowledge proofs\n8. `Type` name - useful for doing string inspection of types (structs) in Move\n9. `Url` and `Versioned` - useful libraries and types for explicit representation of special values"
+    }
+  ],
+  "title": "Libraries"
+}
