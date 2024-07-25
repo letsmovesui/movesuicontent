@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Balances cannot be joint while Coins can",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. Coins cannot be joint while Balances can",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. Newly created Coins can be sent to accounts while Balances have to be merged",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "9",
+  "codeDef": "",
+  "title": "Managing multiple Coin objects - join and split",
+  "quizTitle": "What's the difference between `Coin` and `Balance` when it comes to merging and splitting?",
+  "content": "Image that each time you interact with an application and it creates a new `Coin` object to store the refund or payment to your account. After a day of interacting with them, you end up with 100 different `Coin` objects. Now your coins are both split into 100 different parts and you no longer have enough coins to do more interactions. What do you do now?\n\nThere are two solutions to this:\n1. Applications and developers avoid creating new coins as much as possible unless needs be. They should instead make an attempt to take an existing Coin from the user to combine the refunds/payments into.\n2. Users can merge the coins together, as part of the last step in their PTB (Programmable Transaction Block).\n\nIn Move, coins can also be easily split and joint with `coin::split` and `coin::join`\n```\npublic fun trade(input_coins: &mut Coin<SUI>) {\n    let refund_coins - ...;\n    coin::join(input_coins, refund_coins);\n}\n```\nCoins and also be split. However, remember the created `Coin` either has to merged into some other coins or they need to be sent to an account. This is because `Coin` doesn't have the store ability and cannot be dropped at the end of the function.\n```\npublic fun split_and_send(input_coins: &mut Coin<SUI>, ctx: &TxContext) {\n    let refund_coins = coin::split(input_coins, 1000);\n    transfer::public_transfer(refund_coins, tx_context::sender(ctx));\n}\n```\nYou might also notice that this is similar to `balance::split` and `balance::join` that we learnt about in previous lessons. Except for of course that these functions deal with different types - Coin and Balance, they are almost identical in behavior in Move. However, coin's functions are used more in PTB (Programmable Transaction Blocks) as applications often return Coins instead of Balances while `balance::split` and `balance::join` are used more as part of Move flows."
+}

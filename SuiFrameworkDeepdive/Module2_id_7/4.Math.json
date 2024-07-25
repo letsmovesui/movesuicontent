@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. 2.5 in fixed_point32",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. 3",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. 2",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "4",
+  "codeDef": "",
+  "title": "Math and fixed_point32",
+  "quizTitle": "What is the result of 5 / 2 in Move?",
+  "content": "# Math\nThe math module provides useful math functions for working with unsigned integers in Move. This is different from the EVM world where users need to deploy their own math libraries.\n\nThe math module provides the following functions:\n- max: Return the larger of x and y\n```\nlet max = math::max(5, 10);\nassert!(max == 10, 0);\n```\n\n- min: Return the smaller of x and y\n```\nlet min = math::min(5, 10);\nassert!(min == 5, 0);\n```\n\n- diff: Return the absolute value of x - y\n```\nlet diff = math::diff(5, 10);\nassert!(diff == 5, 0);\n```\n\n- pow: Return the value of a base raised to a power\n```\nlet pow = math::pow(2, 3);\nassert!(pow == 8, 0);\n```\n\n- sqrt: Get a nearest lower integer Square Root for x\n```\nlet sqrt = math::sqrt(9);\nassert!(sqrt == 3, 0);\n```\n\n- sqrt_u128: Similar to math::sqrt, but for u128 numbers\n```\nlet sqrt = math::sqrt_u128(9);\nassert!(sqrt == 3, 0);\n```\n\n- divide_and_round_up: Calculate x / y, but round up the result\n```\nlet divide_and_round_up = math::divide_and_round_up(5, 2);\nassert!(divide_and_round_up == 3, 0);\n```\n\n# fixed_point32\nMove doesn't have native floating point numbers. All numbers are unsigned integers. This can make it hard to implement sophisticated math calculations such as in Defi protocols.\nThe standard libraries in Sui Move however provides a Move-based implementation of fixed-point numbers with 32 fractional bits. This is a binary representation, so decimal values may not be exactly representable, but it provides more than 9 decimal digits of precision both before and after the decimal point (18 digits total). For comparison, double precision floating-point has less than 16 decimal digits of precision, so be careful about using floating-point to convert these values to decimal.\nThis however comes with extra gas cost due to Move expressions vs a native implementation in Rust in the Move language.\nCurrently only fixed point numbers with 32 bits on the fractional and integer part are supported.\n\nTo create a fixed point number:\n```\nlet one_half = fixed_point32::create_from_rational(1, 2);\nlet two = fixed_point32::create_from_raw_value(2);\n```\n\nTo perform arithmetic operations on fixed point numbers:\n```\nlet sum = fixed_point32::add(one_half, two);\nlet product = fixed_point32::multiply(one_half, two);\nlet quotient = fixed_point32::divide(one_half, two);\n```\n\nTo convert a fixed point number to a u64:\n```\nlet value = fixed_point32::get_raw_value(one_half);\n```\n\nTo check if a fixed point number is zero:\n```\nlet is_zero = fixed_point32::is_zero(one_half);\n```"
+}

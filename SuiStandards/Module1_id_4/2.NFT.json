@@ -1,0 +1,23 @@
+{
+  "codeSol": "module sui::sui_fren {\n    use std::string::String;\n    use sui::object::UID;\n    use sui::url::Url;\n\n    struct SuiFrenCollection has key {\n        id: UID,\n        creator: address,\n        name: String,\n        description: String,\n        limit: u64,\n        url: Url,\n    }\n\n    struct SuiFren has key {\n        id: UID,\n        collection: address,\n        name: String,\n        url: Url,\n        attributes: vector<String>,\n    }\n}",
+  "quizType": "CODING",
+  "answers": [
+    {
+      "answer": "Each token is unique while each NFT is not",
+      "isCorrect": false
+    },
+    {
+      "answer": "Each NFT is unique while each token is not",
+      "isCorrect": false
+    },
+    {
+      "answer": "NFTs cannot be objects",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "2",
+  "codeDef": "module sui::sui_fren {\n    // Add the structs here\n}",
+  "title": "NFT Standard - Collection and Token Objects",
+  "quizTitle": "Let's start easy with this lesson and attempt to create our own simple NFT standard for SuiFrens. Define two separate object structs, one for SuiFrenCollection, and one for SuiFren (as an NFT) with the following fields:\nSuiFrenCollection:\n1. creator of type address\n2. name of type String\n3. description of type String\n4. limit of type u64\n5. url of type sui::url::Url\n\nSuiFren NFT:\n1. collection of type address\n2. name of type String\n3. url of type sui::url::Url\n4. attributes of type vector<String>\n\nHint: Don't forget imports!",
+  "content": "To understand how to implement NFTs, let's define the core components of NFTs - creators, collections, tokens (NFTs):\n\n# Creators\nCreators are the individuals or entities responsible for producing and minting NFTs. They can be artists, musicians, game developers, content creators, or anyone who generates unique digital content that can be tokenized into NFTs.\n\nCreators use blockchain platforms and smart contracts to mint NFTs, defining the properties, ownership, and rules associated with each token. They can also specify attributes and metadata for their NFTs to provide additional information and context to buyers and collectors.\n\n# NFT collections\nare groups or sets of non-fungible tokens (NFTs) that share a common theme, style, or creator. They are curated collections of unique digital assets, often organized around a specific genre, artist, project, or category.\n\nFor example, a collection might be centered around digital art, featuring NFTs created by various artists. Another collection could revolve around virtual real estate, offering unique parcels of virtual land in a virtual world. Each NFT within a collection is distinct, but they are grouped together based on a common theme or affiliation.\n\n# NFT tokens\nNFT tokens are grouped into collections. Once a creator creates a collection, they can allow users to mint NFT tokens in the same collection, each one having unique identifier and attributes. Whether there's a limit to how many NFT tokens can be minted for a single collection can be defined by the creator via how they implement the smart contracts.\n\n# Implementation\nIn Sui Move, we can represent both NFT Collection and Token as objects. A Collection object can have the following fields:\n1. creator: The address of the collection's creator\n2. name: Collection's name such as \"SuiFrens\"\n3. description: Description of the collection\n4. limit: The number of tokens that can minted in the collection\n5. url: Collection's url\n\nAn NFT token usually has the following fields:\n1. collection: The address of the collection object\n2. name: Token's name e.g. \"SuiFren #1234\"\n3. url: Url of the token's image\n4. attributes: A list of attributes for the token such as birthdate, generation, etc. like we've seen in the previous course.\n\nNFT tokens can also have other attributes such as display info, royalty, etc. that we'll discuss more in later lessons. \n\n"
+}

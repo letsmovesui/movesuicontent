@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Because dynamic object fields removes the structs from object storage",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. Because the struct fields don't have to be objects",
+      "isCorrect": true
+    },
+    {
+      "answer": "C. Because dynamic fields are faster to read and write than dynamic object fields",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "5",
+  "codeDef": "",
+  "title": "Using Dynamic Fields for Managing Contract States",
+  "quizTitle": "Why do we want to use dynamic fields for the different laptop store configs instead of dynamic object fields?",
+  "content": "Another useful application of dynamic fields is to manage contracts states. You might be tempted to use multiple shared objects for each state struct. For example, we can have the following set up for the laptop store's configs:\n```\nstruct PriceConfigs has key {\n    id: UID,\n    price_range: vector<u64>,\n}\n\nstruct StoreHours has key {\n    id: UID,\n    open_hours: vector<vector<u8>>,\n}\n\nstruct SpecConfigs has key {\n    id: UID,\n    specs_range: vector<u64>,\n}\n\nfun init(ctx: &mut TxContext) {\n    let price_configs = PriceConfigs {\n        id: object::new(ctx),\n        price_range: vector[1000, 5000],\n    };\n    let store_hours = StoreHours {\n        id: object::new(ctx),\n        open_hours: vector[vector[9, 12], vector[1, 5]],\n    };\n    let spec_configs = SpecConfigs {\n        id: object::new(ctx),\n        specs_range: vector[1000, 10000],\n    };\n    transfer::share_object(price_configs);\n    transfer::share_object(store_hours);\n    transfer::share_object(spec_configs);\n}\n```\nIt's not a lot of work to create the shared objects. Each object is shared so it can be accessed and/or modified by users when they purchase a laptop for example:\n```\npublic fun purchase_laptop(price_configs: &PriceConfigs, store_hours: &SotreHours, spec_configs: &SpecConfigs, laptop: String, price: u64, ctx: &mut TxContext) {\n}\n```\nAs you can see, this function's signature is too long and hard to read. Furthermore the web UI that submits the transactions on the user's behalf would need to track all of these shared objects' addresses. Imagine what would happen if we have 5 or even 10 shared objects! It's also overkill as these different structs are never separated and live independently so they don't really need to be objects.\n\nIt's much cleaner to instead create a single state config object and add dynamic fields there:\n```\nstruct StateConfigs has key {\n    id: UID,\n}\n\nconst PRICE_CONFIGS: vector<u8> = b\"PRICE_CONFIGS\";\nstruct PriceConfigs has store {\n    price_range: vector<u64>,\n}\n\nconst STORE_HOURS: vector<u8> = b\"STORE_HOURS\";\nstruct StoreHours has store {\n    open_hours: vector<vector<u8>>,\n}\n\nconst SPEC_CONFIGS: vector<u8> = b\"SPEC_CONFIGS\";\nstruct SpecConfigs has store {\n    specs_range: vector<u64>,\n}\n\nfun init(ctx: &mut TxContext) {\n    let state_configs = StateConfigs {\n        id: object::new(ctx),\n    };\n    dynamic_fields::add(&mut state_configs.id, PRICE_CONFIGS, PriceConfigs {\n        id: object::new(ctx),\n        price_range: vector[1000, 5000],\n    });\n    dynamic_fields::add(&mut state_configs.id, STORE_HOURS, StoreHours {\n        id: object::new(ctx),\n        open_hours: vector[vector[9, 12], vector[1, 5]],\n    });\n    dynamic_fields::add(&mut state_configs.id, SPEC_CONFIGS, SpecConfigs {\n        id: object::new(ctx),\n        specs_range: vector[1000, 10000],\n    });\n    transfer::share(state_configs);\n}\n```\nThe user transactions would then only need to track and pass a single object's address:\n```\npublic fun purchase_laptop(state_configs: &StateConfigs, laptop: String, price: u64, ctx: &mut TxContext) {\n}\n```\nAs you can see, this is much cleaner!"
+}

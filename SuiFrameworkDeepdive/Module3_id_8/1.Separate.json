@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Tests in Move run faster",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. Tests in Move are easier to write and can test more deeply all functionalities in a module",
+      "isCorrect": true
+    },
+    {
+      "answer": "C. Tests in Move come with built-in formal verification",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "1",
+  "codeDef": "",
+  "title": "Separate test files for conciseness",
+  "quizTitle": "What are the benefits of writing unit tests in Move?",
+  "content": "# Why unit tests\nUnit tests are a critical part of the development process. They help ensure that the code behaves as expected and that changes to the code do not break existing functionality.\n\nEspecially in the smart contract world, where bugs can be very costly (millions of dollars at stake!), unit tests are a must-have. In general, developers are recommended to write tests that cover:\n- The happy path: tests that cover the expected behavior of the code.\n- Edge cases: tests that cover the unexpected behavior of the code. Especially cases that lead to errors.\n- E2E tests: tests that cover the full flow of the code, including the interaction with other modules and the blockchain.\n\nIn addition to unit tests, developers can also write integration tests, which would be in Typescript and can test everything end-to-end, including the interaction with the blockchain run locally.\n\n# Unit tests in Move\nUnit tests in Move, different from Solidity, are natively designed to be written directly in Move. This allows for deep integration with the language and the ability to test the full range of Move code.\nMove unit tests can be written in the same file as the module being tested. However, it is recommended to write tests in a separate file to keep the module file clean and focused on the module's implementation.\nThis also reduces the amount of #[test_only] annotations needed to be added for test-only logic. We'll discuss this more in a later lesson in this course.\nThe structure of a Move source code directory is as below:\n- sources/\n  - module1.move\n  - module2.move\n  - module3.move\n- tests/\n  - module1_tests.move\n  - module2_tests.move\n  - module3_tests.move\n- Move.toml\n\nThere should be a separate file for each module's tests. The file name should be the module name followed by _tests.move. For example, if the module name is my_module, the test file should be named my_module_tests.move.\n\nEach test module looks like this:\n```\n#[test_only]\nmodule my_package::my_module_tests {\n}\n\nThe #[test_only] annotation makes sure this module is not deployed when the package is published."
+}

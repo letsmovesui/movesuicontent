@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. #[testonly]",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. #[test-only]",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. #[test_only]",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "3",
+  "codeDef": "",
+  "title": "Calling private functions in the tested module",
+  "quizTitle": "How do you the test only annotation?",
+  "content": "In some cases, developers might want to test private functions or to use a private function to create a private data structure. You can do this by making these private functions public(friend) and friending the test module in the tested module.\nHowever, giving a function higher visibility than necessary is not a good practice. Instead, you can use the #[test_only] attribute to allow a function to be called only from the test module. This attribute is only available in the test module and is not available in the production code.\n\n```\nmodule my_package::my_module {\n    fun private_function() {\n        // ...\n    }\n    \n    #[test_only]\n    fun call_private_function() {\n        private_function();\n    }\n}\n\nmodule my_package::my_module_tests {\n    use my_package::my_module;\n    \n    #[test]\n    fun test_private_function() {\n        my_module::call_private_function();\n        // ...\n    }\n}\n```\n\nA few other things to remember when writing tests:\n- #[test_only] functions are especially useful for calling init function of the tested module as init functions are not called by default when tests are run. They have to call explicitly.\n- Make sure to not mispell #[test_only] such as #[testonly] or #[test_onlyy] as this would make the functions non-test! This can be catastrophic if test code is deployed, for example a function to mint money.\nThis is caught by the compiler nowadays but it's still a good practice in general to make sure the annotations are correct.\n- Developers should not abuse #[test_only] functions if there's no need for them.\n- #[test_only] annocation can also be on imports if there are imports used in test only functions in the tested module. Without this, the compiler might warn there's an unused import."
+}

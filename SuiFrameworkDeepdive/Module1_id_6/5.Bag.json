@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. TableVec can be created with literal with vector cannot",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. TableVec scales better than vector with large amount of items",
+      "isCorrect": true
+    },
+    {
+      "answer": "C. vector is fixed-sized while TableVec is not",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "5",
+  "codeDef": "",
+  "title": "Bag of heterogeneous data",
+  "quizTitle": "What's the difference between `Bag` and `Table`?",
+  "content": "Different from vector and table-based data structures which can only store elements of the same type, a bag can store elements of different types. This is because a bag is a collection of key-value pairs, where the key is a unique identifier and the value is the data associated with the key. The key can be of any type, and the value can be of any type. This makes a bag a very flexible data structure, but also a bit more complex to work with than a vector or table.\nBoth table-based data structures and Bag use dynamic fields under the hood. Bags are especially useful for situation where developers want to accept different types of payment Coins or miscellaneous objects.\nNote that since Bag also uses dynamic fields, it can only store up to 1000 items (limit on number of dynamic fields).\n\nTo create a Bag:\n```\nlet bag = bag::new();\n```\n\nTo add a key-value pair to a bag:\n```\nbag::add(&mut bag, b\"name\", b\"John Doe\");\nbag::add(&mut bag, b\"age\", 25);\n```\nPairs with the same keys cannot exist in the same Bag.\nOnly keys that have the copy, drop, and store abilities can be added to a Bag. Only values that have the store ability can be added.\n\nTo retrieve a value from a bag:\n```\nlet name = bag::borrow(&bag, b\"name\");\nlet age = bag::borrow(&bag, b\"age\");\n```\n\nTo modify a value in a bag:\n```\nlet age = bag::borrow_mut(&mut bag, b\"age\");\n*age = 26;\n```\n\nThere are two ways to check if an element is in a Bag:\n1. Check if a specific key exists in the Bag:\n```\nif (bag::contains(&bag, b\"name\")) {\n    // do something\n}\n```\n2. Check if a key exists and that the value is of specific type:\n```\nif (bag::contains_with_type::<vector<u8>, u64>(&bag, b\"age\")) {\n    // do something\n}\n```\n\nTo remove a value from a bag:\n```\nlet age = bag::remove(&mut bag, b\"age\");\n```\n\nA Bag cannot be destroyed automatically. It must be empty before it can be destroyed:\n```\nbag::destroy_empty(bag);\n```"
+}

@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. To make it clear on-chain or off-chain who the creators are",
+      "isCorrect": true
+    },
+    {
+      "answer": "B. For royalty payment split",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. Because it's required by the OriginByte standard",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "11",
+  "codeDef": "",
+  "title": "Multiple creators",
+  "quizTitle": "Why should the list of creators added to the collection as an attribute?",
+  "content": "We've seen from previous lessons how the creator, usually the module deployer, can hold multiple permissions:\n1. Creator can own the Collection object for adding, updating, or deleting attributes.\n2. Creator can own the Display object for NFTs in the collection to control how they can be displayed in UIs.\n3. Creator can receive the royalty payments when the NFTs are traded on marketplaces\n```\nuse nft_protocol::royalty;\nuse nft_protocol::royalty_strategy_bps;\nuse ob_permissions::witness;\nuse std::string::{Self, String};\nuse sui::package;\n\n/// Can be used for authorization of other actions post-creation. It is\n/// vital that this struct is not freely given to any contract, because it\n/// serves as an auth token.\nstruct Witness has drop {}\n\nfun init(otw: KITE, ctx: &mut TxContext) {\n    let (collection, mint_cap) =\n        collection::create_with_mint_cap<KITE, KiteNFT>(&otw, option::none(), ctx);\n    let delegated_witness = witness::from_witness(Witness {});\n     collection::add_domain(\n        delegated_witness,\n        &mut collection,\n        display_info::new(\n            string::utf8(b\"Kites\"),\n            string::utf8(b\"A NFT collection of Kites on Sui\"),\n        ),\n    );\n \n    // Single creator account receiving all royalty\n    let shares = vector[100];\n    let creator = tx_context::sender(ctx);\n    let shares = utils::from_vec_to_map(creator, shares);\n    // 100 BPS (Basis points) == 1%\n    royalty_strategy_bps::create_domain_and_add_strategy(\n        delegated_witness, &mut collection, royalty::from_shares(shares, ctx), 100, ctx,\n    );    \n\n    // Make sure loyalty can be easily enforced.\n    let publisher = package::claim(otw, ctx);\n    let (transfer_policy, transfer_policy_cap) =\n        transfer_request::init_policy<KiteNFT>(&publisher, ctx);\n    royalty_strategy_bps::enforce(&mut transfer_policy, &transfer_policy_cap);\n}\n```\nFor some collections, especially in games, there can be multiple creators, either because there are multiple different people involved or just for splitting the royalty payments into multiple accounts for safety reason. OriginByte provides a simple creators module interface that allows adding multiple creators. This can be used to:\n1. Add a creators attribute to the collection to keep track of all the creator addresses.\n2. Split royalty payment with specified percentages for these different creators accounts\n```\nuse nft_protocol::creators;\nuse ob_utils::utils;\n\nfun init(otw: KITE, ctx: &mut TxContext) {\n    let (collection, mint_cap) =\n        collection::create_with_mint_cap<KITE, KiteNFT>(&otw, option::none(), ctx);\n    let delegated_witness = witness::from_witness(Witness {});\n     collection::add_domain(\n        delegated_witness,\n        &mut collection,\n        display_info::new(\n            string::utf8(b\"Kites\"),\n            string::utf8(b\"A NFT collection of Kites on Sui\"),\n        ),\n    );\n    \n    // List of all creators\n    let creators = vector[\n        @0xA01, @0xA05, @0xA06, @0xA07, @0x08\n    ];\n    collection::add_domain(\n        delegated_witness,\n        &mut collection,\n        creators::new(utils::vec_set_from_vec(&creators)),\n    );\n \n    // Royalty payment is split between 5 accounts at 20% each.\n    let shares = vector[2_000, 2_000, 2_000, 2_000, 2_000];\n    let shares = utils::from_vec_to_map(creator, shares);\n    // 100 BPS (Basis points) == 1%\n    royalty_strategy_bps::create_domain_and_add_strategy(\n        delegated_witness, &mut collection, royalty::from_shares(shares, ctx), 100, ctx,\n    );    \n\n    // Make sure loyalty can be easily enforced.\n    let publisher = package::claim(otw, ctx);\n    let (transfer_policy, transfer_policy_cap) =\n        transfer_request::init_policy<KiteNFT>(&publisher, ctx);\n    royalty_strategy_bps::enforce(&mut transfer_policy, &transfer_policy_cap);\n}\n```\nCreators can also be added or removed with control over the Collection object (either as owned or shared object)."
+}

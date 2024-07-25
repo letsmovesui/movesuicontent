@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. ObjectTable can store only objects while Table can store anything that has the right abilities",
+      "isCorrect": true
+    },
+    {
+      "answer": "B. Table cannot store objects",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. ObjectTable is bounded",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "9",
+  "codeDef": "",
+  "title": "Object data structures: Object bag, Object table",
+  "quizTitle": "What's the difference between ObjectTable and Table?",
+  "content": "ObjectBag and ObjectTable are similar data structures to Bag and Table, respectively and can store elements of different types. The difference is that ObjectBag and ObjectTable are designed to store objects, and the objects are stored in the storage. This is important for external tools to be able to access the objects. The difference is not observable from within Move.\n\nTo create an ObjectBag or ObjectTable:\n```\nlet bag = object_bag::new::<T>(ctx);\nlet table = object_table::new::<K, V>(ctx);\n```\n\nTo add an object to the bag or table:\n```\nobject_bag::add(&mut bag, obj);\nobject_table::add(&mut table, key, obj);\n```\n\nTo borrow an object from the bag or table:\n```\nlet obj = object_bag::borrow(&bag, id);\nlet obj = object_table::borrow(&table, key);\n```\n\nTo modify an object from the bag or table:\n```\nlet obj = object_bag::borrow_mut(&mut bag, id);\nobj.property = value;\nlet obj = object_table::borrow_mut(&mut table, key);\nobj.property = value;\n```\n\nTo remove an object from the bag or table:\n```\nlet obj = object_bag::remove(&mut bag, id);\nlet obj = object_table::remove(&mut table, key);\n```\n\nTo check if an object exists in the bag or table:\n```\nlet exists = object_bag::contains(&bag, id);\nlet exists = object_table::contains(&table, key);\n```\n\nTo get the number of objects in the bag or table:\n```\nlet len = object_bag::length(&bag);\nlet len = object_table::length(&table);\n```"
+}

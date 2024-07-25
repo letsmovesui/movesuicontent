@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "VecMap is fix-sized",
+      "isCorrect": false
+    },
+    {
+      "answer": "LinkedTable is based on Table so it's always better than vector",
+      "isCorrect": false
+    },
+    {
+      "answer": "LinkedTable is more gas efficient and has more functionalities",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "10",
+  "codeDef": "",
+  "title": "Summary",
+  "quizTitle": "Why use `LinkedTable` over `VecMap`?",
+  "content": "In summary, when choosing which data structure to use, consider the following:\n1. **Gas cost**: Table-based data structures and bags have lower gas costs when used to store a large number of objects. This is because the cost of accessing an object in a table or bag is independent of the number of objects stored in the table or bag. In contrast, the cost of accessing an object in a vector is proportional to the number of objects stored in the vector.\n2. **Protocol needs**: Using the right data structure that offers the operations and functionalities a protocol needs is more efficient than using raw data structures and implementing the functionalities from scratch. PriorityQueue and LinkedTable for example are more efficient than using a vector and implementing the functionalities of a priority queue or a linked list.\n\n"
+}

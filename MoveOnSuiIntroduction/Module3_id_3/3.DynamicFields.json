@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. They both don't remove the nested object from global storage",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. They both require explicit struct definition",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. They both can work for object and non-object structs",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "3",
+  "codeDef": "",
+  "title": "Dynamic Fields vs Dynamic Object Fields vs Wrapping",
+  "quizTitle": "What is the similarity between object wrapping and dynamic fields?",
+  "content": "Let's summarize the different approaches to combining objects we have learnt so far:\n1. Object wrapping: Store objects within another objects (for example SuiFrens in GiftBoxes). This removes the wrapped objects (SuiFrens) from global storage. Off-chain web UI cannot look them up after wrapping. The object no longer has any owner. You can think of this almost as converting an object into a normal non-object struct instance.\n2. Dynamic Fields: Can be used to store objects as well. This also removes the object from global storage. Ownership is also removed. Very similar to object wrapping, except that the field is added dynamically instead of explicitly defined in the struct.\n3. Dynamic Object Fields: Does not remove the object from global storage. Ownership is transferred to the special \"dynamic field object\" that is generally not easy to look up for Web UIs. In most cases, this has almost the same effect as forfeiting ownership of the object.\n\n```\nentry fun wrap_fren(fren: SuiFren, ctx: &mut TxContext) {\n    let gift_box = GiftBox {\n        id: object::new(ctx),\n        inner: fren,\n    };\n    transfer::transfer(gift_box, tx_context::sender(ctx));\n}\n\n// Dynamic fields\npublic fun color_hat(sui_fren: &mut SuiFren, color: String) {\n    if (dynamic_field::exists_(&sui_fren.id, string::utf8(HAT_KEY))) {\n        let hat = dynamic_field::borrow_mut(&mut sui_fren.id, string::utf8(HAT_KEY));\n        hat.color = color;\n    } else {\n        dynamic_field::add(&mut sui_fren.id, string::utf8(HAT_KEY), Hat { color });\n    }\n}\n\n// Dynamic object fields\npublic fun color_hat(sui_fren: &mut SuiFren, color: String, ctx: &mut TxContext) {\n    if (dynamic_object_field::exists_(&sui_fren.id, string::utf8(HAT_KEY))) {\n        let hat = dynamic_object_field::borrow_mut(&mut sui_fren.id, string::utf8(HAT_KEY));\n        hat.color = color;\n    } else {\n        let hat = Hat {\n            id: object::new(ctx),\n            color,\n        };\n        dynamic_object_field::add(&mut sui_fren.id, string::utf8(HAT_KEY), hat);\n    }\n}\n```\n\nTo choose how to compose objects, developers should pay attention to:\n1. Whether the field should be explicitly defined in the struct. This is a drawback of using dynamic fields as they are not easily seen from looking at the object struct definition. This means other developers will need to read through the entire module's code to find all possible dynamic fields that can be added. It's generally not recommended to add more than 10 separate dynamic fields.\n2. Whether the object should be removed from global storage and thus not visible to web UI."
+}

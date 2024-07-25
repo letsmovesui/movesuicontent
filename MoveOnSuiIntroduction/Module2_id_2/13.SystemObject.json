@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. The previous function that's calling the current function",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. The sender of the transaction",
+      "isCorrect": true
+    },
+    {
+      "answer": "C. The sender of SUI tokens",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "13",
+  "codeDef": "",
+  "title": "System Object: TxContext and avoid security vulnerabilities",
+  "quizTitle": "What does `tx_context::sender` return?",
+  "content": "Another very commonly used System object is TxContext. We have seen this in action for two main use cases:\n1. Create a new object's id with `object::new`\n2. Get the sender with `tx_context::sender`\n```\nstruct MyObject has key {\n    id: UID,\n    value_1: u64,\n    value_2: u64,\n}\n\npublic fun create_object(value_1: u64, value_2: u64, ctx: &mut TxContext) {\n    let object = MyObject {\n        id: object::new(ctx),\n        value_1,\n        value_2,\n    };\n    transfer::transfer(object, tx_context::sender(ctx));\n}\n```\nDevelopers should pay close attention to how they use the sender address returned from `tx_context::sender`. It's okay to send newly created to this objects, but it can be problematic to use as authentication or proof of user's direct intention to call this function. For example:\n```\nmodule 0x123::safe_module {\n    public fun claim_rewards(amount: u64, receiver: address, ctx: &mut TxContext) {\n        let sender = tx_context::sender(ctx);\n        assert!(sender == @0x12345, ENOT_AUTHORIZED);\n        // Send the amount of rewards to the receiver address\n    }\n}\n```\nIn the example above, we want to write a special function `claim_rewards` that allows a specific address to call and withdraw an amount of reward money. This looks safe on the surface but can be exploited! A malicious developer can just write a module that promises an airdrop to the users and in the code do the following:\n```\nmodule 0x123::malicious_module {\n    const MALICIOUS_DEVELOPER: address = @0x98765;\n\n    public fun airdrop(ctx: &mut TxContext) {\n        safe_module::claim_rewards(1000, MALICIOUS_DEVELOPER, ctx);\n    }\n}\n```\nThis would instantly drain the user's rewards! safe_module cannot easily distinguish if the ctx object is being passed by the VM (first function call) or by another function from another object. One solution here could be to make claim_rewards an entry function so it has to be directly called by the user. However, this might not be desirable in some cases if we want to sometimes allow our own code (from a different module in the same package) to call this function. \n\nIn general, using `tx_context::sender` as an authentication mechanism is risky and should be very thoroughly evaluated if there can be any possible exploits.\n\nOther functions that the `tx_context` module offers includes digest which returns the transaction hash, epoch and `epoch_timestamp_ms` which return the current epoch number and corresponding timestamp, and `fresh_object_address` which uses the same underlying function as `object::new` to generate a new object's address."
+}

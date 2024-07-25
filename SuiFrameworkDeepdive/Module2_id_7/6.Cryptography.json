@@ -1,0 +1,19 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. They require a lot of operations",
+      "isCorrect": true
+    },
+    {
+      "answer": "B. They require users to pay a deposit",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "6",
+  "codeDef": "",
+  "title": "Cryptography libraries",
+  "quizTitle": "Why are cryptography functions expensive gas-wise?",
+  "content": "Sui Move offers many cryptography functions that allow many different use cases:\n- bls12381: BLS12-381 signature verification. This can be used for verifying bls12381 signatures. BLS signatures are generally more efficient to verify than ECDSA signatures.\n- ed25519: Ed25519 signature verification. This is the default signature/keypair scheme in Sui.\n- ecdsa_k1 or sep256k1: secp256k1 signature verification. This is the signature scheme used in Bitcoin.\n- ecdsa_r1 or secp256r1: secp256r1 signature verification. This is the signature scheme used in Ethereum and other EVM chains.\n- blake2b (sui::hash module): Blake2b hashing. This is a fast and secure hashing algorithm.\n- keccak256 (sui::hash module): Keccak256 hashing. This is the hashing algorithm used in Ethereum.\n- groth16: Groth16 proof verification. This is used for zero-knowledge proof.\n\nUsing these functions allow developers to build secure and efficient applications on Sui as well as applications that can interop with signatures or proofs generated from other blockchains such as Ethereum.\n```\npublic fun verify_ethereum_signature(\n    signature: vector<u8>,\n    public_key: vector<u8>,\n    msg: vector<u8>,\n    hash: u8,\n): bool {\n    sui::ecdsa_r1::secp256r1_verify(&signature, &public_key, &msg, hash)\n}\n\nIn most flows involving cryptography functions, developers can write functions that take in a signed message or proof along with other params required that are specific to each cryptography mechanism. Then the Move code can do the verification on chain, guaranteeing correctness and decentralization.\nNote that cryptography functions can cost a lot of gas as they require a lot of computation behind the scene, implemented as native functions in Rust. Developers should avoid writing functions that do a lot of verifications."
+}

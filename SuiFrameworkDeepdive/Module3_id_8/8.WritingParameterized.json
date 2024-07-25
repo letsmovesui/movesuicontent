@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Loop through the list of test inputs and expected outputs, and run the tested function one for each combination",
+      "isCorrect": true
+    },
+    {
+      "answer": "B. Use native support built into Sui Move",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. Use the annotation #[parameterized(inputs = ...",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "8",
+  "codeDef": "",
+  "title": "Writing parameterized tests",
+  "quizTitle": "How do you run parameterized tests?",
+  "content": "Parameterized tests are tests that are run multiple times with different input values. This is useful when you want to test a function with a range of different inputs, or when you want to test a function with a range of different expected outputs.\nUnit tests in Sui don't have native support for parameterized tests yet. To do this, we'll need to write some boilerplate code to run the same test multiple times with different input values.\n\n```\n#[test]\nfun test_add() {\n    assert_eq!(add(1, 2), 3);\n    assert_eq!(add(2, 2), 4);\n    assert_eq!(add(3, 2), 5);\n}\n```\ncan be rewritten as:\n```\n#[test]\nfun test_add() {\n    let test_cases = vector[(1, 2, 3), (2, 2, 4), (3, 2, 5)];\n    let i = 0;\n    while (i < vector::length(test_cases)) {\n        assert_eq!(add(a, b), expected);\n        i = i + 1;\n    }\n}\n```\n\nThis will become much easier with macro functions coming in Move soon.\n\n```\n#[test]\nfun test_add() {\n    let test_cases = vector[(1, 2, 3), (2, 2, 4), (3, 2, 5)];\n    vector::for_each(test_cases, |test_case| {\n        let (a, b, expected) = test_case;\n        assert_eq!(add(a, b), expected);\n    }\n}\n```"
+}

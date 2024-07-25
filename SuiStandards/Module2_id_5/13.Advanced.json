@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Coin has more functions",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. Coin has built-in tracking",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. Coin offers full implementation developers can use without writing much code",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "13",
+  "codeDef": "",
+  "title": "Advanced: Handling multiple coin types",
+  "quizTitle": "Why is the keyword phantom required in the `Listing` object?",
+  "content": "In a previous lesson, we implemented a simple `Coin` market where sellers list the coins they want to sell and buyers can buy from the listings automatically with SUI and without the seller having to be involved or signing the transaction.\n```\nstruct Listing<phantom CoinType> has key {\n    id: UID,\n    seller: address,\n    listed_coins: Balance<CoinType>,\n    amount_asked: u64,\n}\n\npublic fun buy_coins<CoinType>(listing: Listing<CoinType>, payment: Coin<SUI>): Balance<CoinType> {\n    let Listing<CoinType> { id, seller, listed_coins, amount_asked } = listing;\n    object::delete(id);\n    assert!(coin::value(&payment) == amount_asked, EINSUFFICIENT_PAYMENT);\n    transfer::public_transfer(payment, seller);\n    listed_coins\n}\n```\n\nWhat if we want to allow sellers to specify which coins they accept as payment instead of always requiring Sui? This means we'd have to use two different types of coins as type arguments to both the `Listing` object and the `buy_coins` function:\n```\nstruct Listing<phantom ListedCoin, phantom PaymentCoin> has key {\n    id: UID,\n    seller: address,\n    listed_coins: Balance<ListedCoin>,\n    amount_asked: u64,\n}\n\npublic fun buy_coins<ListedCoin, PaymentCoin>(listing: Listing<ListedCoin, PaymentCoin>, payment: Coin<PaymentCoin>): Balance<CoinType> {\n    let Listing<ListedCoin, PaymentCoin> { id, seller, listed_coins, amount_asked } = listing;\n    object::delete(id);\n    assert!(coin::value(&payment) == amount_asked, EINSUFFICIENT_PAYMENT);\n    transfer::public_transfer(payment, seller);\n    listed_coins\n}\n```\nWe made the following changes:\n1. `Listing` now has two separate (phantom) types. We can name types so here we make the names very explicit to not mix up the types - ListedCoin and PaymentCoin.\n2. `buy_coins` now accepts two coin types as well. The payment now has to be of type `Coin<PaymentCoin>` instead of `Coin<SUI>`.\n3. The logic inside `buy_coins` didn't change much. We don't need to explicitly verify that the payment is of the right type as the payment coin's type is already specified directly in the `Listing<ListedCoin, PaymentCoin>`. Buyers have to provide the right payment or they wouldn't be able to call this function at all!\n\nType correctness is guaranteed  both by the Move compiler and the Sui VM when transactions are executed.\n\nIn very complex situations such as exchanges that allow 3 or 4-way trades between many different coin types, you might see very long functions such as:\n```\npublic fun buy_coins<Coin1, Coin2, Coin3, Coin4>(...) {\n}\n```\nThe `CoinTypes` always have to be explicitly declared as type arguments. This can lead to some complexity if we want to use the same function above to support trades of 1, 2, 3, or 4 types as users cannot leave the missing types empty when calling this function. To get around this, one solution can be to define a \"Null\" Coin type that users can pass if they don't need:\n```\nuse std::type_name;\n\nstruct Null has drop {}\n\npublic fun buy_coins<Coin1, Coin2, Coin3, Coin4>(...) {\n    if (type_name::into_string<Coin3>() == type_name::into_string<Null>()) {\n        // Coin3 is not specified and should be ignored\n    }\n}\n```\nAs shown above, developers can compare the types with `type_name::into_string` to know which types are not specified."
+}

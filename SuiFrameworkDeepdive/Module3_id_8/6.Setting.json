@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. When the test function doesn't error out",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. When the test function errors out with abort code of 1",
+      "isCorrect": true
+    },
+    {
+      "answer": "C. When the test function errors out with abort code of 2",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "6",
+  "codeDef": "",
+  "title": "Setting up SUI coins and Testing failing cases",
+  "quizTitle": "When does a test with #[expected_failure(abort_code = 1)] pass?",
+  "content": "# Creating SUI coins in tests\nSome tests might also need to create SUI coins when testing functions. This can be done via a #[test_only] function already defined in the coin module.\n```\nuse sui::coin;\n\n#[test]\npublic fun test() {\n    let coins = coin::mint_for_testing(1000);\n    // continue with the test\n}\n```\nFor custom coins, developers would need to have test_only functions defined in the modules where these Coins are initialized as a TreasuryCap is required to mint custom coins.\n\n# Failing cases\nWhen testing error cases, developers might want to write tests that expect a failure (e.g. the tested function correctly fails due to invalid inputs).\nThis can be done with the #[expected_failure] annotation\n```\n#[test]\n#[expected_failure(abort_code = kiosk::royalty_rule::EInsufficientAmount)]\nfun test_default_flow_0_invalid_amount_fail() {\n}\n```\nWe can use abort_code = to specify which abort code we expect to be returned by the test without having to hardcode. This is probably the closest we can get to public constants in Move for now. There might be updates in the near future to add support for public constants."
+}

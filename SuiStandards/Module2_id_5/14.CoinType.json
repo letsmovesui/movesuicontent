@@ -1,0 +1,23 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Mint more SUI to pay for gas",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. Still submit the transaction and not pay for gas",
+      "isCorrect": false
+    },
+    {
+      "answer": "C. Buy SUI from an exchange to fund their account for gas",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "14",
+  "codeDef": "",
+  "title": "Coin Type orders in struct type arguments",
+  "quizTitle": "What happens when users specify the types in the wrong order for an object?",
+  "content": "In the previous marketplace example, we created market listings of type `Listing<ListedCoin, PaymentCoin>`. The `buy_coins` function then requires `Listing<ListedCoin, PaymentCoin>` as an argument to know which listing the buyer wants to buy from.\n```\nstruct Listing<phantom ListedCoin, phantom PaymentCoin> has key {\n    id: UID,\n    seller: address,\n    listed_coins: Balance<ListedCoin>,\n    amount_asked: u64,\n}\n\npublic fun buy_coins<ListedCoin, PaymentCoin>(listing: Listing<ListedCoin, PaymentCoin>, payment: Coin<PaymentCoin>): Balance<CoinType> {\n    let Listing<ListedCoin, PaymentCoin> { id, seller, listed_coins, amount_asked } = listing;\n    object::delete(id);\n    assert!(coin::value(&payment) == amount_asked, EINSUFFICIENT_PAYMENT);\n    transfer::public_transfer(payment, seller);\n    listed_coins\n}\n```\nLet's say someone made a listing for `Listing<MyCoin, SUI>` but a buyer mistakes the order and specifies the listing as `Listing<Sui, MyCoin>`, what would happen? When this transaction is sent to the Sui network, the validation layer would error out because `Listing<SUI, MyCoin>` is invalid at the same address provided (SUI is the listed coin and `MyCoin` is the payment). There's no concern that this might accidentally refer to another Listing for SUI as each object's address is unique and can only have a single type. If another seller does create a `Listing<SUI, MyCoin>`, this listing object's address would be different.\n\nThis can be a common problem that users run into especially for complex marketplaces/exchanges that have many different types of listings with different pairs of coins. Different from our Listing example above, in most exchanges on Sui, the order of the Coins actually doesn't matter for the core objects themselves:\n```\nstruct Market<phantom Coin1, phantom Coin2> has key {\n    id: UID,\n    reserves_1: Balance<Coin1>,\n    reserves_2: Balance<Coin2>,\n}\n```\nIn this Market, `Coin1` and `Coin2` have similar role - buyers can buy `Coin1` with `Coin2` or `Coin2` with `Coin1`. Here the order doesn't technically matter, but unfortunately when the Market object is created, we still need to choose which Coin is the first first type (Coin1). Behind the scene, the object is still created with the `Market<Coin1, Coin2>` in that order. So when users interact with this market, they still need to specify the Coins in the right order that they were created with.\n\nOne solution here to make it easier for users can be to ensure `Coin1` and `Coin2` are also sorted in alphabetic order when the `Market` objects are created. This is currently not easy to do yet in Sui Move due to lack of string comparison."
+}

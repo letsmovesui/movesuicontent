@@ -1,0 +1,19 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Yes",
+      "isCorrect": false
+    },
+    {
+      "answer": "B. No",
+      "isCorrect": true
+    }
+  ],
+  "lessonId": "5",
+  "codeDef": "",
+  "title": "Creating Objects - owned, shared, system",
+  "quizTitle": "Do you need to return owned objects borrowed via test_scenario::take_from_sender?",
+  "content": "In many cases, you also need to pass owned and shared objects when calling a tested function. But how do we get these objects? The Sui VM does this automatically when execution transactions, but this is in tests.\ntest_scenario provides a few functions to help with this:\n- test_scenario::take_shared: This function is used to take a shared object from the sender of the transaction. It takes a Scenario object as an argument and returns the shared object.\n```\nlet store = test_scenario::take_shared<BlackBooks>(&scenario);\n```\n- test_scenario::take_from_sender: This function is used to take an owned object from the sender of the transaction. It takes a Scenario object as an argument and returns the owned object.\n```\nlet cap = test_scenario::take_from_sender<StoreOwnerCap>(&scenario);\n```\nOne note here is that if you take shared objects, you need to return them at the end before ending the scenario:\n```\ntest_scenario::return_shared(store);\n```\n\nYou might also need to pass TxContext to the test function. This can be generated with test_scenario as well:\n```\nlet ctx = &mut tx_context::new_from_hint(\n    @0xC4AD,  // sender\n    0u64,     // hint, used to generate tx hash\n    1,        // epoch\n    0,        // epoch_timestamp_ms\n    0,        // `ids_created` (normally should be `0`)\n);\n```\nThrough this, you can also configure the different data return from the tx_context module:\n* sender\n* hint, used to generate tx hash\n* epoch\n* epoch timestamp, in milliseconds\n* number of object ids already created so far. Testing some functionality might need this.\n\nClock, the other system object, is a shared object so it can taken like that:\n```\nlet clock = test::take_shared<Clock>(&test);\n```"
+}

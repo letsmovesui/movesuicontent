@@ -1,0 +1,19 @@
+{
+  "codeSol": "",
+  "quizType": "ANSWERS",
+  "answers": [
+    {
+      "answer": "A. Yes",
+      "isCorrect": true
+    },
+    {
+      "answer": "B. No",
+      "isCorrect": false
+    }
+  ],
+  "lessonId": "7",
+  "codeDef": "",
+  "title": "Transfer Policy - share vs public_share, freeze vs public_freeze",
+  "quizTitle": "Imagine you're working on a movie theatre smart contract that can issue Ticket objects for different shows. Should this Ticket object have the store ability?",
+  "content": "Similar to `transfer::transfer` and `transfer::public_transfer` functions, the transfer module also offers:\n1. `share` and `public_share`\n2. `freeze` and `public_freeze`\n\nThese functions work similarly to `transfer` vs `public_transfer` - the public versions can only be used if the object passed to them has the store ability. This gives developers additional flexibility to control how their objects can be used.\n\nWith `share` and `public_share`, the developers can allow their objects to only be owned or also sharable. For example:\n1. A developer creates a `PunchCard` object where users can get a hole clipped every time they buy a boba tea. The developer wants the `PunchCard` to be sharable between users so different users can use the same `PunchCard`. They can just add the store ability to `PunchCard`.\n2. Another developer creates a `GymMembership` object for their gym but doesn't want their membership to be shared by more than one users. They just need to not give `GymMembership` the store ability.\n\nWith `freeze` and `public_freeze`, developers can similarly decide if they want the owners to be able to make their objects immutable:\n1. The `PunchCard` object from earlier can potentially be made immutable if the users want to give up on it.\n2. The `GymMembership` object cannot be made immutable as once the membership expires, it should be deleted."
+}

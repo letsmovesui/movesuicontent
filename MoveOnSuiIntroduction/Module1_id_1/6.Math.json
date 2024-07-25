@@ -1,0 +1,10 @@
+{
+  "codeSol": "module 0x123::sui_fren {\r\n    use sui::object::{Self, UID};\r\n    use sui::transfer;\r\n    use sui::tx_context::TxContext;\r\n\r\n    struct AdminCap has key {\r\n        id: UID,\r\n        num_frens: u64,\r\n    }\r\n    \r\n    fun init(ctx: &mut TxContext) {\r\n        let admin_cap = AdminCap {\r\n            id: object::new(ctx),\r\n            num_frens: 10^3,\r\n        };\r\n        transfer::share_object(admin_cap);\r\n    }\r\n}\r\n",
+  "quizType": "CODING",
+  "answers": [],
+  "lessonId": 6,
+  "codeDef": "module 0x123::sui_fren {\n   use sui::object::{Self, UID};\n   use sui::transfer;\n   use sui::tx_context::TxContext;\n\n\n   struct AdminCap has key {\n       id: UID,\n       num_frens: u64,\n   }\n  \n   fun init(ctx: &mut TxContext) {\n       let admin_cap = AdminCap {\n           id: object::new(ctx),\n           num_frens: 1000,\n       };\n       transfer::share_object(admin_cap);\n   }\n}\n",
+  "title": "Math",
+  "quizTitle": "Rewrite the default `num_frens` value for `AdminCap` using exponential of 10.",
+  "content": "Doing math in Move is easy and very similar to other programming languages:\n* Add: x + y\n* Subtract: x - y\n* Multiply: x * y\n* Divide: x / y\n* Mod: x % y\n* Exponential: x ^ y\nNote that this is integer math, which means results are rounded down. For example, 5 / 2 = 2. We'll learn how to do fractional math in later lessons."
+}
