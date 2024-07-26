@@ -7,7 +7,7 @@
   "title": "Meet the SuiFrens",
   "quizTitle": "Check out the SuiFrens below.",
   "content": [
-    "In this first lesson, you're going to be building the foundation for a fantasy world where the SuiFrens hang out, play different games, and evolve together.\n\n",
+    "huan In this first lesson, you're going to be building the foundation for a fantasy world where the SuiFrens hang out, play different games, and evolve together.\n\n",
     "We'll create a fren_group Move module with the following features:\n\n",
     "Create new SuiFrens via a function. The first Fren type we’ll start out with is Baby Shark.\n",
     "Keep track of all the SuiFrens that have been born.\n",
