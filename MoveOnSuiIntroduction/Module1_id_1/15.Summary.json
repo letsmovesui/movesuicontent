@@ -6,5 +6,31 @@
   "codeDef": "",
   "title": "Summary",
   "quizTitle": "",
-  "content": "**Module**\n1. Module Organization: Move code is organized into modules, each similar to a single smart contract on other blockchains.\n2. API and Interaction: Modules provide APIs through entry and public functions. Users interact with these modules by calling functions either through transactions or other Move code. This interaction is processed by the Sui blockchain, and any resulting changes are saved.\n3. Modular design is emphasized in Sui. Developers are encouraged to keep modules small and in separate files, adhering to clean data structures and code. This facilitates easier integration for applications and clearer understanding for users. \n\n**Struct**\n1. Struct is a group of related fields, each with its own type such as numbers, booleans, and vectors.\n2. Each struct can be defined as having \"abilities\" - key, store, drop, copy.\n3. MoveSui supports these following data types: unsigned integers, booleans, addresses, string, vector, and custom struct types.\n\n**Objects**\nAfter finishing this module, you should be able to understand:\n1. Life cycle of an object\n2. How to read an object\n3. How to update an object\n4. How to delete an object\n5. Shared objects vs owned objects\n\n**Vectors** could be understood as dynamic arrays, essential for managing lists of items in smart contracts, reflecting the need for flexible data structures in blockchain applications.\n\n**Events** is a way for your module to communicate that something happened on the blockchain to your app front-end, which can be 'listening' for certain events and take action when they happen.\n\n**Functions**\n1. Public function (has keyword public): can be called from any other Move modules and from transactions\n2. Private function (has keyword private): can  be called only in the same module and cannot be called from transactions"
+  "content": [
+    "**Module**\n",
+    "1. Module Organization: Move code is organized into modules, each similar to a single smart contract on other blockchains.\n",
+    "2. API and Interaction: Modules provide APIs through entry and public functions. Users interact with these modules by calling functions either through transactions or other Move code. This interaction is processed by the Sui blockchain, and any resulting changes are saved.\n",
+    "3. Modular design is emphasized in Sui. Developers are encouraged to keep modules small and in separate files, adhering to clean data structures and code. This facilitates easier integration for applications and clearer understanding for users.\n",
+    "\n",
+    "**Struct**\n",
+    "1. Struct is a group of related fields, each with its own type such as numbers, booleans, and vectors.\n",
+    "2. Each struct can be defined as having \"abilities\" - key, store, drop, copy.\n",
+    "3. MoveSui supports these following data types: unsigned integers, booleans, addresses, string, vector, and custom struct types.\n",
+    "\n",
+    "**Objects**\n",
+    "After finishing this module, you should be able to understand:\n",
+    "1. Life cycle of an object\n",
+    "2. How to read an object\n",
+    "3. How to update an object\n",
+    "4. How to delete an object\n",
+    "5. Shared objects vs owned objects\n",
+    "\n",
+    "**Vectors** could be understood as dynamic arrays, essential for managing lists of items in smart contracts, reflecting the need for flexible data structures in blockchain applications.\n",
+    "\n",
+    "**Events** is a way for your module to communicate that something happened on the blockchain to your app front-end, which can be 'listening' for certain events and take action when they happen.\n",
+    "\n",
+    "**Functions**\n",
+    "1. Public function (has keyword public): can be called from any other Move modules and from transactions\n",
+    "2. Private function (has keyword private): can  be called only in the same module and cannot be called from transactions\n"
+  ]
 }

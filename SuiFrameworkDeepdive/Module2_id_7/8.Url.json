@@ -19,5 +19,18 @@
   "codeDef": "",
   "title": "Url",
   "quizTitle": "Why should developers use Url instead of String",
-  "content": "Url is a convenient type provided in the Sui Move libraries to explicitly mark a field in a struct or a function's argument as a URL. This is useful for the Move language to understand the type of the field and to provide better error messages when the field is used incorrectly.\nDevelopers should use store values as Urls or accept Urls arguments where possible. Note that transactions cannot pass Urls as arguments, so Url should only be used as arguments for functions that are not directly called by users.\n\n```\nstruct MyStruct {\n    url: Url,\n}\n\npublic fun take_url(url: Url) {\n    // ...\n}\n```\n\nUrl can be created using the new_unsafe function, which takes a string as an argument. This function does not validate the string, so it is the responsibility of the developer to ensure that the string is a valid URL. The new_unsafe_from_bytes function can also be used to create a Url from a vector of bytes. This function will abort if the bytes are not valid ASCII.\n```\nuse 0x1::sui::url;\n\npublic fun main() {\n    let url = url::new_unsafe(\"https://example.com\");\n    let url_bytes = vector::from_hex(\"68747470733a2f2f6578616d706c652e636f6d\");\n    let url_from_bytes = url::new_unsafe_from_bytes(url_bytes);\n}\n```\n\nThe inner_url function can be used to get the inner URL from a Url as a String. The update function can be used to update the inner URL of a Url.\n```\nuse 0x1::sui::url;\nlet url = url::new_unsafe(\"https://example.com\");\nlet inner_url = url::inner_url(&url);\n```\n\nA Url can be updated using the update function. This function takes a mutable reference to the Url and a string as arguments. The string will replace the inner URL of the Url.\n```\nuse 0x1::sui::url;\nlet url = url::new_unsafe(\"https://example.com\");\nurl::update(&mut url, \"https://example.org\");\n```"
+  "content": [
+    "Url is a convenient type provided in the Sui Move libraries to explicitly mark a field in a struct or a function's argument as a URL. This is useful for the Move language to understand the type of the field and to provide better error messages when the field is used incorrectly.\n",
+    "Developers should use store values as Urls or accept Urls arguments where possible. Note that transactions cannot pass Urls as arguments, so Url should only be used as arguments for functions that are not directly called by users.\n",
+    "```\nstruct MyStruct {\n    url: Url,\n}\n\npublic fun take_url(url: Url) {\n    // ...\n}\n```\n",
+    "\n",
+    "Url can be created using the new_unsafe function, which takes a string as an argument. This function does not validate the string, so it is the responsibility of the developer to ensure that the string is a valid URL. The new_unsafe_from_bytes function can also be used to create a Url from a vector of bytes. This function will abort if the bytes are not valid ASCII.\n",
+    "```\nuse 0x1::sui::url;\n\npublic fun main() {\n    let url = url::new_unsafe(\"https://example.com\");\n    let url_bytes = vector::from_hex(\"68747470733a2f2f6578616d706c652e636f6d\");\n    let url_from_bytes = url::new_unsafe_from_bytes(url_bytes);\n}\n```\n",
+    "\n",
+    "The inner_url function can be used to get the inner URL from a Url as a String. The update function can be used to update the inner URL of a Url.\n",
+    "```\nuse 0x1::sui::url;\nlet url = url::new_unsafe(\"https://example.com\");\nlet inner_url = url::inner_url(&url);\n```\n",
+    "\n",
+    "A Url can be updated using the update function. This function takes a mutable reference to the Url and a string as arguments. The string will replace the inner URL of the Url.\n",
+    "```\nuse 0x1::sui::url;\nlet url = url::new_unsafe(\"https://example.com\");\nurl::update(&mut url, \"https://example.org\");\n```"
+  ]
 }

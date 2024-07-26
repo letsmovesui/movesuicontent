@@ -3,7 +3,7 @@
   "quizType": "ANSWERS",
   "answers": [
     {
-      "answer": "u64, vector, Option, String ",
+      "answer": "u64, vector, Option, String",
       "isCorrect": false
     },
     {
@@ -19,5 +19,20 @@
   "codeDef": "",
   "title": "Summary",
   "quizTitle": "Which types can be passed arguments in a transaction?",
-  "content": "In this course, we have covered many standard libraries provided by the Sui framework. These libraries cover extra types such as `String`, `Option`, `FixedPoint32`. There are also math libraries and other libraries that help developers write safe and easy to understand code in Move.\n\nMost of the libraries can be found under `std::`, with some exceptions such as `bcs`, `url`, or `versioned` under `sui::`. When writing Move code, developers should use the provided libraries as much as possible, because:\n1. They are written in an efficient way and might receive more optimizations later such as conversion into native Rust code that's even more efficient than Move.\n2. They have been extensively tested, audited, and battle-tested. This ensures that small mistakes are not made that can lead to hard to debug issues.\n\nWe covered the following libraries and their use cases:\n1. `String` - a semi-primitive type that's technically a struct but can be freely passed to functions as arguments as part of a transaction\n2. `Option` - an accessory type provided to represent optional values. Cannot be passed via transactions\n3. `FixedPoint32` - a number type useful for representing fractional numbers in Move as Move doesn't have native support for them. Cannot be passed via transactions\n4. `Transaction` context - a system object automatically passed to a function as a last argument if the function requires it. Useful for getting information about the transaction such as sender/digest or querying system states - current epoch, timestamp or for generating a unique id.\n5. `Math` - useful math functions\n6. `BCS` - Can be used to pass structs as bytes array (vector<u8>) as Sui doesn't by default allow passing custom structs as arguments. The receiving function will need to manually extract values one by one from the given bytes vector.\n7. `Cryptography` functions - Useful for verifying signed messages (with different schemes) or zero knowledge proofs\n8. `Type` name - useful for doing string inspection of types (structs) in Move\n9. `Url` and `Versioned` - useful libraries and types for explicit representation of special values"
+  "content": [
+    "In this course, we have covered many standard libraries provided by the Sui framework. These libraries cover extra types such as `String`, `Option`, `FixedPoint32`. There are also math libraries and other libraries that help developers write safe and easy-to-understand code in Move.\n",
+    "Most of the libraries can be found under `std::`, with some exceptions such as `bcs`, `url`, or `versioned` under `sui::`. When writing Move code, developers should use the provided libraries as much as possible, because:\n",
+    "1. They are written in an efficient way and might receive more optimizations later such as conversion into native Rust code that's even more efficient than Move.\n",
+    "2. They have been extensively tested, audited, and battle-tested. This ensures that small mistakes are not made that can lead to hard-to-debug issues.\n",
+    "We covered the following libraries and their use cases:\n",
+    "1. `String` - a semi-primitive type that's technically a struct but can be freely passed to functions as arguments as part of a transaction\n",
+    "2. `Option` - an accessory type provided to represent optional values. Cannot be passed via transactions\n",
+    "3. `FixedPoint32` - a number type useful for representing fractional numbers in Move as Move doesn't have native support for them. Cannot be passed via transactions\n",
+    "4. `Transaction` context - a system object automatically passed to a function as a last argument if the function requires it. Useful for getting information about the transaction such as sender/digest or querying system states - current epoch, timestamp or for generating a unique id.\n",
+    "5. `Math` - useful math functions\n",
+    "6. `BCS` - Can be used to pass structs as bytes array (vector<u8>) as Sui doesn't by default allow passing custom structs as arguments. The receiving function will need to manually extract values one by one from the given bytes vector.\n",
+    "7. `Cryptography` functions - Useful for verifying signed messages (with different schemes) or zero-knowledge proofs\n",
+    "8. `Type` name - useful for doing string inspection of types (structs) in Move\n",
+    "9. `Url` and `Versioned` - useful libraries and types for explicit representation of special values"
+  ]
 }

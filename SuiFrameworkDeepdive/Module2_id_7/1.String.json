@@ -6,5 +6,26 @@
   "codeDef": "public fun split(s: String): vector<String> {\n    // ...\n}",
   "title": "String",
   "quizTitle": "Split a string with \",\" as the delimiter\nHint: Use index_of and a while loop",
-  "content": "Strings are not technically a primitive type in Move but are implemented as a module in the standard library. Strings, different from other structs, come with a lot of support from the VM and API. Strings can be passed as-is as a transaction argument, via the SDK, and behind the scene, it will be properly serialized/deserialized into the String struct.\nFunctions in Move can directly accept a String argument:\n```\npublic fun do_something(s: String) {\n    // ...\n}\n```\n\nIn Move, since String is not a primitive type, it has no direct literal syntax. Instead, you can create a string using the `utf8` function from the `string` module:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\n```\nb\"Hello, World!\" is a byte array literal (vector<u8>), and the `utf8` function converts it into a string. The `utf8` function will error out if the byte array is not a valid UTF-8 string.\n\nStrings cannot be directly be set as a constant since constant expressions do not support function calls. You'd need to assign to the constant the bytes value first before converting it into a string:\n```\nconst HELLO_WORLD: vector<u8> = b\"Hello, World!\";\npublic fun hello_world(): String {\n    std::string::utf8(HELLO_WORLD)\n}\n```\nThis will create a UTF-8 string.\n\nMove also supports ASCII strings, which is a different module:\n```\nlet s = std::ascii::from_asciistring(b\"Hello, World!\");\n```\nHowever, UTF-8 strings are more commonly used and ASCII strings are much rarer.\n\nStrings are mutable. You can also append strings together:\n```\nlet s1 = std::string::utf8(b\"Hello, \");\nlet s2 = std::string::utf8(b\"World!\");\nstd::string::append(&mut s1, s2);\n```\n\nOr take a substring:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet sub = std::string::sub_string(&s, 0, 5);\n```\n\nYou can also insert a string into another string at a specific index:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet s2 = std::string::utf8(b\"Brave \");\nstd::string::insert(&mut s, 7, s2);\n```\n\nYou can also find the index of a substring:\n```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet s2 = std::string::utf8(b\"World\");\nlet index = std::string::index_of(&s, &s2);\n```"
+  "content": [
+    "Strings are not technically a primitive type in Move but are implemented as a module in the standard library. Strings, different from other structs, come with a lot of support from the VM and API. Strings can be passed as-is as a transaction argument, via the SDK, and behind the scene, it will be properly serialized/deserialized into the String struct.\n",
+    "Functions in Move can directly accept a String argument:\n",
+    "```\npublic fun do_something(s: String) {\n    // ...\n}\n```\n",
+    "In Move, since String is not a primitive type, it has no direct literal syntax. Instead, you can create a string using the `utf8` function from the `string` module:\n",
+    "```\nlet s = std::string::utf8(b\"Hello, World!\");\n```\n",
+    "b\"Hello, World!\" is a byte array literal (vector<u8>), and the `utf8` function converts it into a string. The `utf8` function will error out if the byte array is not a valid UTF-8 string.\n",
+    "Strings cannot be directly be set as a constant since constant expressions do not support function calls. You'd need to assign to the constant the bytes value first before converting it into a string:\n",
+    "```\nconst HELLO_WORLD: vector<u8> = b\"Hello, World!\";\npublic fun hello_world(): String {\n    std::string::utf8(HELLO_WORLD)\n}\n```\n",
+    "This will create a UTF-8 string.\n",
+    "Move also supports ASCII strings, which is a different module:\n",
+    "```\nlet s = std::ascii::from_asciistring(b\"Hello, World!\");\n```\n",
+    "However, UTF-8 strings are more commonly used and ASCII strings are much rarer.\n",
+    "Strings are mutable. You can also append strings together:\n",
+    "```\nlet s1 = std::string::utf8(b\"Hello, \");\nlet s2 = std::string::utf8(b\"World!\");\nstd::string::append(&mut s1, s2);\n```\n",
+    "Or take a substring:\n",
+    "```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet sub = std::string::sub_string(&s, 0, 5);\n```\n",
+    "You can also insert a string into another string at a specific index:\n",
+    "```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet s2 = std::string::utf8(b\"Brave \");\nstd::string::insert(&mut s, 7, s2);\n```\n",
+    "You can also find the index of a substring:\n",
+    "```\nlet s = std::string::utf8(b\"Hello, World!\");\nlet s2 = std::string::utf8(b\"World\");\nlet index = std::string::index_of(&s, &s2);\n```"
+  ]
 }

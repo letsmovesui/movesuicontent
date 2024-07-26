@@ -6,5 +6,24 @@
   "codeDef": "module 0x123::sui_fren {\r\n    use sui::object::{Self, UID};\r\n    use sui::transfer;\r\n    use sui::tx_context::TxContext;\r\n\r\n    const DEFAULT_NUM_FRIENDS: u16 = 1000;\r\n\r\n    struct AdminCap has key {\r\n        id: UID,\r\n        num_frens: u64,\r\n    }\r\n    \r\n    fun init(ctx: &mut TxContext) {\r\n        let config = AdminCap {\r\n            id: object::new(ctx),\r\n            num_frens: DEFAULT_NUM_FRIENDS,\r\n        };\r\n        transfer::share_object(config);\r\n    }\r\n}\r\n",
   "title": "Typecasting",
   "quizTitle": "The init function below currently sets `num_frens` in AdminCap to a constant (fixed value) `DEFAULT_NUM_FRIENDS` of type `u16` despite `num_frens` is of type `u64`. This will fail to compile due to type mismatch. Fix this.",
-  "content": "In the previous lesson, we've seen different types of integers: `u8`, `u32`, `u64`, `u128`, `u256`. Although math can be done easily among integers of the same type, it's not possible to do math directly between integers of different types:\n```\nfun mixed_types_math(): u64 {\n   let x: u8 = 1;\n   let y: u64 = 2;\n   // This will fail to compile as x and y are different types. One is u8, the other is u64.\n   x + y\n}\n```\nTo correct this, we need to cast x to `u64` with `(x as u64)`. Remember that the parentheses () are required when typecasting.\n```\nfun mixed_types_math(): u64 {\n   let x: u8 = 1;\n   let y: u64 = 2;\n   // This will fail to compile as x and y are different types. One is u8, the other is u64.\n   (x as u64) + y\n}\n```\n"
+  "content": [
+    "In the previous lesson, we've seen different types of integers: `u8`, `u32`, `u64`, `u128`, `u256`. Although math can be done easily among integers of the same type, it's not possible to do math directly between integers of different types:\n",
+    "```\n",
+    "fun mixed_types_math(): u64 {\n",
+    "   let x: u8 = 1;\n",
+    "   let y: u64 = 2;\n",
+    "   // This will fail to compile as x and y are different types. One is u8, the other is u64.\n",
+    "   x + y\n",
+    "}\n",
+    "```\n",
+    "To correct this, we need to cast x to `u64` with `(x as u64)`. Remember that the parentheses () are required when typecasting.\n",
+    "```\n",
+    "fun mixed_types_math(): u64 {\n",
+    "   let x: u8 = 1;\n",
+    "   let y: u64 = 2;\n",
+    "   // This will fail to compile as x and y are different types. One is u8, the other is u64.\n",
+    "   (x as u64) + y\n",
+    "}\n",
+    "```"
+  ]
 }

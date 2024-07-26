@@ -6,5 +6,22 @@
   "codeDef": "module 0x123::fren_summer {\n    use 0x123::sui_fren;\n\n    public fun open_box(generation: u64, birthdate: u64, attributes: vector<String>, ctx: &mut TxContext) {\n        sui_fren::mint(generation, birthdate, attributes, ctx);\n    }\n}",
   "title": "Programmable Transaction Block and Entry functions: Open gift boxes",
   "quizTitle": "Update `fren_summer::open_box` to be a private entry function.",
-  "content": "Another important type of function is entry functions. In the old Move language, there are two types of entry functions - public entry and private entry.\n\nOn the Sui network, a Programmable Transaction Block (PTB) allows users to specify a series of actions (transactions) to be sent to the network as a single transaction. The actions are executed sequentially and are atomic - if any of them fails, the entire PTB fails and all changes are automatically reverted. PTB is a powerful concept that will be covered more in later courses. For now, we'll refer to PTBs as transactions that users send to the Sui blockchain. PTBs can call any public, public entry and private entry functions written in Move modules. Therefore, there are effectively no differences between public and public entry functions in Sui although these concepts are still inherited from classic Move.\n\nThe only new function type we need to learn is private entry functions, which can only be called directly from a transaction, but not from other Move code.\n\nPrivate entry functions (entry functions for short) are useful when developers want to offer features directly to users that can only be called as part of a transaction but not in other module. One example could be clipping a ticket - we want users to have to explicitly have to call this as part of the transaction and don't want other modules to clip a user's ticket on their behalf. The latter is harder for users to detect and they might not expect this to happen when sending a transaction.\n```\nentry fun clip_ticket(ticket: Ticket) {\n    let Ticket {\n          id,\n          expiration_time: _,\n      } = ticket;\n      object::delete(id);\n}\n```\n"
+  "content": [
+    "Another important type of function is entry functions. In the old Move language, there are two types of entry functions - public entry and private entry.\n",
+    "\n",
+    "On the Sui network, a Programmable Transaction Block (PTB) allows users to specify a series of actions (transactions) to be sent to the network as a single transaction. The actions are executed sequentially and are atomic - if any of them fails, the entire PTB fails and all changes are automatically reverted. PTB is a powerful concept that will be covered more in later courses. For now, we'll refer to PTBs as transactions that users send to the Sui blockchain. PTBs can call any public, public entry and private entry functions written in Move modules. Therefore, there are effectively no differences between public and public entry functions in Sui although these concepts are still inherited from classic Move.\n",
+    "\n",
+    "The only new function type we need to learn is private entry functions, which can only be called directly from a transaction, but not from other Move code.\n",
+    "\n",
+    "Private entry functions (entry functions for short) are useful when developers want to offer features directly to users that can only be called as part of a transaction but not in other module. One example could be clipping a ticket - we want users to have to explicitly have to call this as part of the transaction and don't want other modules to clip a user's ticket on their behalf. The latter is harder for users to detect and they might not expect this to happen when sending a transaction.\n",
+    "```\n",
+    "entry fun clip_ticket(ticket: Ticket) {\n",
+    "    let Ticket {\n",
+    "          id,\n",
+    "          expiration_time: _,\n",
+    "      } = ticket;\n",
+    "      object::delete(id);\n",
+    "}\n",
+    "```\n"
+  ]
 }

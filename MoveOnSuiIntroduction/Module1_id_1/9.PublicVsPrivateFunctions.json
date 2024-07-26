@@ -6,5 +6,18 @@
   "codeDef": "module 0x123::sui_fren {\r\n    use sui::object::{Self, UID};\r\n    use sui::transfer;\r\n    use sui::tx_context::TxContext;\r\n    use std::string::String;\r\n    use std::vector;\r\n    \r\n    struct AdminCap has key {\r\n        id: UID,\r\n        num_frens: u64,\r\n    }\r\n    \r\n    struct SuiFren has key {\r\n        id: UID,\r\n        generation: u64,\r\n        birthdate: u64,\r\n        attributes: vector<String>,\r\n    }\r\n}\r\n\r\nmodule 0x123::sui_fren {\r\n    use sui::object::{Self, UID};\r\n    use sui::transfer;\r\n    use sui::tx_context::TxContext;\r\n    use std::string::String;\r\n    use std::vector;\r\n    \r\n    struct AdminCap has key {\r\n        id: UID,\r\n        num_frens: u64,\r\n    }\r\n    \r\n    struct SuiFren has key {\r\n        id: UID,\r\n        generation: u64,\r\n        birthdate: u64,\r\n        attributes: vector<String>,\r\n    }\r\n\r\n    // Add the new function here\r\n}\r\n",
   "title": "Public vs Private Functions",
   "quizTitle": "Create a new public function named mint that takes four arguments and returns a SuiFren object:\n1. generation and birthdate of type `u64`\n2. attributes of type `vector<String>`\n3. ctx of type `&mut TxContext`.\n\nHint: You can use the following shortened form when struct field names and values have the same name:\n```\nstruct MyStruct {\n   value: u64,\n}\nlet value = 1;\nMyStruct {\n   value,\n}\n```",
-  "content": "In the previous examples, we've only been using the `init` function, which creates the `AdminCap` object. This `init` function must be `private` and is called automatically by the Sui Virtual Machine (VM) when the module is deployed.\n\nIn this lesson, we'll create a `public` function that will be called by the user to create a new Fren. A public function in Move looks like this:\n```module 0x123::my_module {\n   public fun equals_1000(x: u64): bool {\n       x == 1000\n   }\n}\n```\nNote that this function has the keyword public, which means it can be called from any other Move modules and from transactions. Private functions on other hand can only be called in the same module and cannot be called from transactions. When public transactions are called, system objects such as `TxContext` and `Clock` can optionally be passed. It’s up to you to add those objects as arguments if your function needs them.\n**Good Practice**\nSystem objects need to always go at the end of the argument list.\n"
+  "content": [
+    "In the previous examples, we've only been using the `init` function, which creates the `AdminCap` object. This `init` function must be `private` and is called automatically by the Sui Virtual Machine (VM) when the module is deployed.\n",
+    "\n",
+    "In this lesson, we'll create a `public` function that will be called by the user to create a new Fren. A public function in Move looks like this:\n",
+    "```module 0x123::my_module {\n",
+    "   public fun equals_1000(x: u64): bool {\n",
+    "       x == 1000\n",
+    "   }\n",
+    "}\n",
+    "```\n",
+    "Note that this function has the keyword public, which means it can be called from any other Move modules and from transactions. Private functions on other hand can only be called in the same module and cannot be called from transactions. When public transactions are called, system objects such as `TxContext` and `Clock` can optionally be passed. It’s up to you to add those objects as arguments if your function needs them.\n",
+    "**Good Practice**\n",
+    "System objects need to always go at the end of the argument list.\n"
+  ]
 }

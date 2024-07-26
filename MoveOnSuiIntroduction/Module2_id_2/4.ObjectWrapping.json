@@ -6,5 +6,27 @@
   "codeDef": "module 0x123::fren_summer {\n    use sui::object::{Self, UID};\n    use 0x123::sui_fren::{Self, SuiFren};\n    use sui::tx_context;\n\n    struct GiftBox has key {\n        id: UID,\n        inner: SuiFren,\n    }\n\n    // Add the new functions here\n}\n\nmodule 0x123::sui_fren {\n    use sui::object::{Self, UID};\n    use sui::transfer;\n    use sui::tx_context::TxContext;\n    use std::string::String;\n    use std::vector;\n    use sui::event;\n\n    friend 0x123::fren_summer;\n    \n    struct SuiFren has key, store {\n        id: UID,\n        generation: u64,\n        birthdate: u64,\n        attributes: vector<String>,\n    }\n\n    // Add the new function here\n\n    public(friend) fun mint(generation: u64, birthdate: u64, attributes: vector<String>, ctx: &mut TxContext) {\n        let sui_fren = SuiFren {\n            id: object::new(ctx),\n            generation,\n            birthdate,\n            attributes,\n        };\n        transfer::transfer(sui_fren, tx_context::sender(ctx));\n    }\n}",
   "title": "Object wrapping - Wrapping Sui Frens in Gift Boxes",
   "quizTitle": "Let's add a few new functions:\n1. Add a friend function to the `sui_fren` module - create, which has the same arguments as mint and creates and returns a `SuiFren`.\n2. Add a new entry function to `fren_summer` - `create_gift`, which has the same arguments as `sui_fren::create`, calls `sui_fren::create` to create a `SuiFren`, puts it into a `GiftBox`, and sends the `GiftBox` to the sender.\n3. Add a new entry function to `fren_summer` - `wrap_fren`, which takes an existing `SuiFren` argument named `fren`, wraps it in a `GiftBox`, and sends the `GiftBox` to the sender.",
-  "content": "We created a new type of object - `GiftBox` that has a `SuiFren` in it. But how do we get a `SuiFren` in there? There are two options here:\n1. Create a new function in `sui_fren` - create, that creates a `SuiFren` object and returns it, instead of immediately transferring it to the sender like the mint function.\n2. Mint the `SuiFren` first. Once the transfer has happened in mint, we cannot retrieve the `SuiFren` in the same transaction and would need to do that in a followup transaction while explicitly passing that `SuiFren` in as an argument. We can add a wrap function in `fren_summer` that allows the sender to wrap an existing `SuiFren` and create a gift box. They can later send it to friends.\n\nIn the second case, putting the `SuiFren` into the `GiftBox` is called <b>object wrapping<b>. This does more than you think - it takes the object being wrapped <b>out of the object storage<b>. This means that if you have a UI that displays all the `SuiFrens` a user owns, that `SuiFren` they wrapped will disappear from the list.\n```\nstruct Box has key {\n    id: UID,\n    thing: Thing,\n}\n\nstruct Thing has key, store {\n    id: UID,\n}\n\npublic fun wrap(thing: Thing, ctx: &mut TxContext) {\n    let box = Box { id: object::new(ctx), thing };\n    transfer::transfer(box, tx_context::sender(ctx));\n}\n```\nNote that the wrap function takes a value, not a reference! We covered passing objects by value in the previous course and how this removes the object from storage.\n"
+  "content": [
+    "We created a new type of object - `GiftBox` that has a `SuiFren` in it. But how do we get a `SuiFren` in there? There are two options here:\n",
+    "1. Create a new function in `sui_fren` - create, that creates a `SuiFren` object and returns it, instead of immediately transferring it to the sender like the mint function.\n",
+    "2. Mint the `SuiFren` first. Once the transfer has happened in mint, we cannot retrieve the `SuiFren` in the same transaction and would need to do that in a followup transaction while explicitly passing that `SuiFren` in as an argument. We can add a wrap function in `fren_summer` that allows the sender to wrap an existing `SuiFren` and create a gift box. They can later send it to friends.\n",
+    "\n",
+    "In the second case, putting the `SuiFren` into the `GiftBox` is called <b>object wrapping<b>. This does more than you think - it takes the object being wrapped <b>out of the object storage<b>. This means that if you have a UI that displays all the `SuiFrens` a user owns, that `SuiFren` they wrapped will disappear from the list.\n",
+    "```\n",
+    "struct Box has key {\n",
+    "    id: UID,\n",
+    "    thing: Thing,\n",
+    "}\n",
+    "\n",
+    "struct Thing has key, store {\n",
+    "    id: UID,\n",
+    "}\n",
+    "\n",
+    "public fun wrap(thing: Thing, ctx: &mut TxContext) {\n",
+    "    let box = Box { id: object::new(ctx), thing };\n",
+    "    transfer::transfer(box, tx_context::sender(ctx));\n",
+    "}\n",
+    "```\n",
+    "Note that the wrap function takes a value, not a reference! We covered passing objects by value in the previous course and how this removes the object from storage.\n"
+  ]
 }

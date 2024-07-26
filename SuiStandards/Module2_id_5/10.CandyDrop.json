@@ -6,5 +6,10 @@
   "codeDef": "module 0x123::candy_drop {\n    // Implement here\n\n    fun is_allowlisted(user: address): bool {\n        // You don't need to implement this\n    } \n}",
   "title": "Candy drop - a simple Coin airdrop module",
   "quizTitle": "Let's put this all into a simple airdrop module for our `SuiFren` candies:\n1. Create a new module `candy_drop` that defines the `Candy` coin (we'll keep it here instead of in `sui_fren`)\n2. Implement an init function to create the coin and store the `TreasuryCap`. `Metadata` should be frozen as we'd not change anything later.\n3. Add a mint entry function that allows users to freely mint a given amount (`u64`) of candies if they're added to an allowlist of where the airdrop can be added in. You don't have to implement the allowlist, just assume there's an existing function called `is_allowlisted` that takes an address and returns true if the address is on the allowlist. We'll cover how to implement this in a later lesson.\nYou can use `assert!(condition, ENOT_NOT_ALLOWLISTED);`\n5. The mint function should also emit an event at the end of type `MintCandiesEvent` with two fields - `user` (set to the transaction sender) and `amount`.",
-  "content": "We have gone through a lot of useful concepts about Coins in the previous lessons:\n1. Creating a new coin with `coin::create_currency` returns the `TreasuryCap` used to mint/burn/update metadata and the metadata objects.\n2. `Coins` are like wallets and can split, joint. Balances are like cash and can be moved from one `Coin` to another\n3. `TreasuryCap` and `Metadata` objects can both be stored for programmatic access without the need for a single owner account to keep having to sign transactions"
+  "content": [
+    "We have gone through a lot of useful concepts about Coins in the previous lessons:\n",
+    "1. Creating a new coin with `coin::create_currency` returns the `TreasuryCap` used to mint/burn/update metadata and the metadata objects.\n",
+    "2. `Coins` are like wallets and can split, joint. Balances are like cash and can be moved from one `Coin` to another\n",
+    "3. `TreasuryCap` and `Metadata` objects can both be stored for programmatic access without the need for a single owner account to keep having to sign transactions"
+  ]
 }

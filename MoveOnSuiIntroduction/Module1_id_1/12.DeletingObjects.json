@@ -6,5 +6,31 @@
   "codeDef": "module 0x123::sui_fren {\r\n    use sui::object::{Self, UID};\r\n    use sui::transfer;\r\n    use sui::tx_context::TxContext;\r\n    use std::string::String;\r\n    use std::vector;\r\n    \r\n    struct AdminCap has key {\r\n        id: UID,\r\n        num_frens: u64,\r\n    }\r\n    \r\n    struct SuiFren has key {\r\n        id: UID,\r\n        generation: u64,\r\n        birthdate: u64,\r\n        attributes: vector<String>,\r\n    }\r\n\r\n    public fun mint(generation: u64, birthdate: u64, attributes: vector<String>, ctx: &mut TxContext) {\r\n        let sui_fren = SuiFren {\r\n            id: object::new(ctx),\r\n            generation,\r\n            birthdate,\r\n            attributes,\r\n        };\r\n        transfer::transfer(sui_fren, tx_context::sender(ctx));\r\n    }\r\n    \r\n    // Add the new burn function here\r\n}\r\n",
   "title": "Deleting Objects",
   "quizTitle": "Add a new public burn function that takes and destroys a SuiFren :(\n",
-  "content": "In previous lessons, we have covered the two type of Object arguments that can be passed to a function from a user transaction: immutable reference `&ObjectStruct` used to read data from an object and mutable reference `&mut ObjectStruct` used to modify an object. There's a third type of object argument we can pass to an entry function - the object value that can be used to delete an object from Sui storage:\n```\nmodule 0x123::ticket_module {\n  use sui::clock::{Self, Clock};\n  use sui::object::{Self, UID};\n  use sui::transfer;\n  use sui::tx_context::TxContext;\n \n  struct Ticket has key {\n      id: UID,\n      expiration_time: u64,\n  }\n \n  public fun clip_ticket(ticket: Ticket) {\n     let Ticket {\n         id,\n         expiration_time: _,\n     } = ticket;\n     object::delete(id);\n  }\n}\n```\nIn the example above, we added a new function `clip_ticket` that takes a `Ticket` object as an argument and deletes it. We are not passing a mutable reference to the object as we're not modifying it. We're instead passing the entire Ticket struct so we can delete it:\n1. Destruct the Ticket struct with let `Ticket { id, expiration_time: _ } = ticket`\n2. Destroy the Ticket object with `object::delete(id)`"
+  "content": [
+    "In previous lessons, we have covered the two type of Object arguments that can be passed to a function from a user transaction: immutable reference `&ObjectStruct` used to read data from an object and mutable reference `&mut ObjectStruct` used to modify an object. There's a third type of object argument we can pass to an entry function - the object value that can be used to delete an object from Sui storage:\n",
+    "```\n",
+    "module 0x123::ticket_module {\n",
+    "  use sui::clock::{Self, Clock};\n",
+    "  use sui::object::{Self, UID};\n",
+    "  use sui::transfer;\n",
+    "  use sui::tx_context::TxContext;\n",
+    " \n",
+    "  struct Ticket has key {\n",
+    "      id: UID,\n",
+    "      expiration_time: u64,\n",
+    "  }\n",
+    " \n",
+    "  public fun clip_ticket(ticket: Ticket) {\n",
+    "     let Ticket {\n",
+    "         id,\n",
+    "         expiration_time: _,\n",
+    "     } = ticket;\n",
+    "     object::delete(id);\n",
+    "  }\n",
+    "}\n",
+    "```\n",
+    "In the example above, we added a new function `clip_ticket` that takes a `Ticket` object as an argument and deletes it. We are not passing a mutable reference to the object as we're not modifying it. We're instead passing the entire Ticket struct so we can delete it:\n",
+    "1. Destruct the Ticket struct with let `Ticket { id, expiration_time: _ } = ticket`\n",
+    "2. Destroy the Ticket object with `object::delete(id)`\n"
+  ]
 }

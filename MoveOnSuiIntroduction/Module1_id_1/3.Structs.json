@@ -6,5 +6,19 @@
   "codeDef": "module 0x123::sui_fren {\r\n    // Create the struct here\r\n}\r\n",
   "title": "Structs",
   "quizTitle": "Add a new struct AdminCap with a single field num_frens of type u64",
-  "content": "Data on the Sui blockchain can be organized into structs. Structs can be thought of as a group of related fields, each with its own type such as numbers, booleans, and vectors. Struct is a foundational concept in Sui Move. \n```\nmodule 0x123::my_module {\n   use sui::object::UID;\n\n\n   // All structs that are the core of an object need to have the `key` attribute and an id field of type UID.\n   struct MyObject has key {\n       id: UID,\n       color: u64,\n   }\n}\n```\nIn the example above, we're defining a simple struct MyObject with two fields id and color. Each struct can be defined as having \"abilities\" - key, store, drop, copy. We'll explain more later what these abilities mean.\n# Move types\n\nMove supports multiple different types:\n\n1. Unsigned integers: `u8`, `u16`, `u32`, `u64`, `u128`, `u256` The different types of integers have different maximum values they can store. For example, u8 can store values up to 2^8 - 1 or 255, while `u256` can store values up to 2^256 - 1.\n2. `Booleans: bool`\n3. `Addresses: address`. Address is a core construct in blockchains and represents a user identity. Users can generate addresses from keys that only they have off-chain and use them to sign transactions. This proves that the transactions do come from the users and are not fake.\n4. `String`\n5. `Vector`. An array of u64 would be `vector<u64>`.\n6. Custom struct types such as UID imported with use `sui::object::UID` in the earlier example.\n"
+  "content": [
+    "Data on the Sui blockchain can be organized into structs. Structs can be thought of as a group of related fields, each with its own type such as numbers, booleans, and vectors. Struct is a foundational concept in Sui Move. \n",
+    "```\n",
+    "module 0x123::my_module {\n   use sui::object::UID;\n\n\n   // All structs that are the core of an object need to have the `key` attribute and an id field of type UID.\n   struct MyObject has key {\n       id: UID,\n       color: u64,\n   }\n}\n",
+    "```\n",
+    "In the example above, we're defining a simple struct MyObject with two fields id and color. Each struct can be defined as having \"abilities\" - key, store, drop, copy. We'll explain more later what these abilities mean.\n",
+    "# Move types\n",
+    "\nMove supports multiple different types:\n",
+    "\n1. Unsigned integers: `u8`, `u16`, `u32`, `u64`, `u128`, `u256` The different types of integers have different maximum values they can store. For example, u8 can store values up to 2^8 - 1 or 255, while `u256` can store values up to 2^256 - 1.\n",
+    "2. `Booleans: bool`\n",
+    "3. `Addresses: address`. Address is a core construct in blockchains and represents a user identity. Users can generate addresses from keys that only they have off-chain and use them to sign transactions. This proves that the transactions do come from the users and are not fake.\n",
+    "4. `String`\n",
+    "5. `Vector`. An array of u64 would be `vector<u64>`.\n",
+    "6. Custom struct types such as UID imported with use `sui::object::UID` in the earlier example.\n"
+  ]
 }

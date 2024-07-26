@@ -6,5 +6,27 @@
   "codeDef": "",
   "title": "Summary",
   "quizTitle": "",
-  "content": "Different approaches to combine objects \n1. **Object wrapping**\n- Store objects within another objects (for example SuiFrens in GiftBoxes). This removes the wrapped objects (SuiFrens) from global storage. Off-chain web UI cannot look them up after wrapping. The object no longer has any owner. You can think of this almost as converting an object into a normal non-object struct instance.\n\n2. **Dynamic Fields** could be understood as invisible fields that are not explicitly defined on an object struct.\n- Can be used to store objects as well. This also removes the object from global storage. Ownership is also removed. Very similar to object wrapping, except that the field is added dynamically instead of explicitly defined in the struct.\n- In order to add dynamic fields to an object, you need a mutable reference to that object. Adding a dynamic field can be done simply via dynamic_field::add with the mutable object's id, the key and the value.\n- To read or modify a dynamic field, you need an immutable and mutable references to the object respectively and the field name (key). If the field name is a struct, you need the struct value itself, which is why the structs used as keys must have copy and drop abilities.\n- Dynamic object fields are preferred over dynamic fields to store objects dynamically. You should only use dynamic fields if you intentionally want to remove the objects from global storage.\n\n3. **Dynamic Object Fields**\n- Does not remove the object from global storage. Ownership is transferred to the special \"dynamic field object\" that is generally not easy to look up for Web UIs. In most cases, this has almost the same effect as forfeiting ownership of the object.\n\n4. **Objects own other objects**\n- Perfect use case is composable NFTs. This allows for powerful composition of NFTs together that make natural sense to users and is often seen in Web 3 Games that use NFTs.\n- Use when there is clear indication of object hierarchy in a complex application design with multiple types of objects.\n- There is a drawback which is it's harder to remove the owned object later. Therefore, objects owning objects is generally more useful if the relationship is rarely or never changed.\n\nInteresting object data structures: \n1. **Object bag**: a versatile data structure for storing a mixed collection of different object types - useful for applications requiring flexible and varied object compositions, such as randomized or composite NFTs.\n2. **Object table**: a data structure for storing collections of a single object type with specific key names - beneficial for applications that require structured and named collections of similar objects."
+  "content": [
+    "Different approaches to combine objects \n",
+    "1. **Object wrapping**\n",
+    "- Store objects within another objects (for example SuiFrens in GiftBoxes). This removes the wrapped objects (SuiFrens) from global storage. Off-chain web UI cannot look them up after wrapping. The object no longer has any owner. You can think of this almost as converting an object into a normal non-object struct instance.\n",
+    "\n",
+    "2. **Dynamic Fields** could be understood as invisible fields that are not explicitly defined on an object struct.\n",
+    "- Can be used to store objects as well. This also removes the object from global storage. Ownership is also removed. Very similar to object wrapping, except that the field is added dynamically instead of explicitly defined in the struct.\n",
+    "- In order to add dynamic fields to an object, you need a mutable reference to that object. Adding a dynamic field can be done simply via dynamic_field::add with the mutable object's id, the key and the value.\n",
+    "- To read or modify a dynamic field, you need an immutable and mutable references to the object respectively and the field name (key). If the field name is a struct, you need the struct value itself, which is why the structs used as keys must have copy and drop abilities.\n",
+    "- Dynamic object fields are preferred over dynamic fields to store objects dynamically. You should only use dynamic fields if you intentionally want to remove the objects from global storage.\n",
+    "\n",
+    "3. **Dynamic Object Fields**\n",
+    "- Does not remove the object from global storage. Ownership is transferred to the special \"dynamic field object\" that is generally not easy to look up for Web UIs. In most cases, this has almost the same effect as forfeiting ownership of the object.\n",
+    "\n",
+    "4. **Objects own other objects**\n",
+    "- Perfect use case is composable NFTs. This allows for powerful composition of NFTs together that make natural sense to users and is often seen in Web 3 Games that use NFTs.\n",
+    "- Use when there is clear indication of object hierarchy in a complex application design with multiple types of objects.\n",
+    "- There is a drawback which is it's harder to remove the owned object later. Therefore, objects owning objects is generally more useful if the relationship is rarely or never changed.\n",
+    "\n",
+    "Interesting object data structures: \n",
+    "1. **Object bag**: a versatile data structure for storing a mixed collection of different object types - useful for applications requiring flexible and varied object compositions, such as randomized or composite NFTs.\n",
+    "2. **Object table**: a data structure for storing collections of a single object type with specific key names - beneficial for applications that require structured and named collections of similar objects."
+  ]
 }

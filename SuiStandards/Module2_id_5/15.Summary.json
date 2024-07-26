@@ -6,5 +6,22 @@
   "codeDef": "",
   "title": "Summary",
   "quizTitle": "",
-  "content": "**Sui Coin standard** is the equivalent concept of ERC-20 on Ethereum network on Sui network but it is easier to use.\n* `coin::create_currency` creates a new coin, returns a metadata object storing information about the coin (symbold, name, description, and logo URL), and returns the Treasury Cap object to manage the coins.\n* `coin::mint` create a new coins and doesn't need to specify MyCoin as the type argument as the compiler can infer that.\n* We could use `TreasuryCap<CoinType>` object to mint the coins. However, only the `TreasuryCap` owner can call it. If we want to allow users to freely mint coins, we could wrap `TreasuryCap` object in a shared object.\n* We could also use `TreasureyCap` to burn coins by calling `coin::burn` function. This  also destroys the `Coin` object itself. \n\n**Coin vs Balance**\n1. `Coin` object is more like a wallet. The Coin wallet has an inner balance and cash (Balance) can be taken out of it and deposited into another Coin wallet object. Coins can also be easily split and joint with `coin::split` and `coin::join`.\n2. `Balance` is like cash only. It cannot be stored alone and needs to be put into wallets or pockets. Developers can choose to create their own \"pocket\" objects to store `Balance`. A few important `Balance` function to remember are `sui::balance`, `split`, and `withdraw_all`.\n\n**Decimals** are often used for Coins/tokens in order to reduce rounding errors. Decimals is a special case and there's no update function for it because decimals is a fundamental property of a coin and can change everyone's balance if it's updated. Therefore, for safety and simplicity, Sui's Coin standard doesn't allow modifying decimals.\n\n**Gas** is the fee required for performing actions, like transactions or smart contracts, on the network. It represents a user-centric, cost-bearing mechanism that maintains the decentralized and transparent nature of blockchain networks.\nApplications could accept SUI tokens as gas fee for their application or they could accept other types of coins as their payment. In the latter case, use `Listing` object and the `buy_coins` function.\n\n"
+  "content": [
+    "**Sui Coin standard** is the equivalent concept of ERC-20 on Ethereum network on Sui network but it is easier to use.\n",
+    "* `coin::create_currency` creates a new coin, returns a metadata object storing information about the coin (symbold, name, description, and logo URL), and returns the Treasury Cap object to manage the coins.\n",
+    "* `coin::mint` create a new coins and doesn't need to specify MyCoin as the type argument as the compiler can infer that.\n",
+    "* We could use `TreasuryCap<CoinType>` object to mint the coins. However, only the `TreasuryCap` owner can call it. If we want to allow users to freely mint coins, we could wrap `TreasuryCap` object in a shared object.\n",
+    "* We could also use `TreasureyCap` to burn coins by calling `coin::burn` function. This  also destroys the `Coin` object itself. \n",
+    "\n",
+    "**Coin vs Balance**\n",
+    "1. `Coin` object is more like a wallet. The Coin wallet has an inner balance and cash (Balance) can be taken out of it and deposited into another Coin wallet object. Coins can also be easily split and joint with `coin::split` and `coin::join`.\n",
+    "2. `Balance` is like cash only. It cannot be stored alone and needs to be put into wallets or pockets. Developers can choose to create their own \"pocket\" objects to store `Balance`. A few important `Balance` function to remember are `sui::balance`, `split`, and `withdraw_all`.\n",
+    "\n",
+    "**Decimals** are often used for Coins/tokens in order to reduce rounding errors. Decimals is a special case and there's no update function for it because decimals is a fundamental property of a coin and can change everyone's balance if it's updated. Therefore, for safety and simplicity, Sui's Coin standard doesn't allow modifying decimals.\n",
+    "\n",
+    "**Gas** is the fee required for performing actions, like transactions or smart contracts, on the network. It represents a user-centric, cost-bearing mechanism that maintains the decentralized and transparent nature of blockchain networks.\n",
+    "Applications could accept SUI tokens as gas fee for their application or they could accept other types of coins as their payment. In the latter case, use `Listing` object and the `buy_coins` function.\n",
+    "\n",
+    ""
+  ]
 }

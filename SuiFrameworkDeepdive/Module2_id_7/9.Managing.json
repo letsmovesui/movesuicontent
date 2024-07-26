@@ -19,5 +19,22 @@
   "codeDef": "",
   "title": "Managing versions with versioned",
   "quizTitle": "What are the fields inside a Versioned object?",
-  "content": "Similar to Url, versioned is a convenient library to provide explicit version management. Developers can use raw version numbers (e.g. u64), but versioned is more explicit and self-documenting.\nversioned can be used to manage versions of objects, an application's data or basically anything else.\nA Versioned is an actual object that can be transferred to accounts or kept inside (wrapped or via dynamic fields) of another object.\nA Versioned can also store the actual value inside itself instead of the value being a separate object, which is a more common use case.\n\nTo create a new Versioned object, use the create function. The initial version and value are required. The value must be a store type.\n```\nlet v = versioned::create(1, b\"hello\", &mut ctx);\n```\n\nTo get the current version of the inner type, use the version function.\n```\nlet ver = versioned::version(&v);\n```\n\nTo load the inner value based on the current version, use the load_value function. Caller specifies an expected type T. If the type mismatch, the load will fail.\n```\nlet val = versioned::load_value(&v);\n```\n\nTo take the inner object out for upgrade, use the remove_value_for_upgrade function. To ensure we always upgrade properly, a capability object is returned and must be used when we upgrade.\n```\nlet (val, cap) = versioned::remove_value_for_upgrade(&mut v);\n```\n\nTo upgrade the inner object with a new version and new value, use the upgrade function. Must use the capability returned by calling remove_value_for_upgrade.\n```\nversioned::upgrade(&mut v, 2, b\"world\", cap);\n```\n\nTo destroy this Versioned container, and return the inner object, use the destroy function.\n```\nlet val = versioned::destroy(v);\n```"
+  "content": [
+    "Similar to Url, versioned is a convenient library to provide explicit version management. Developers can use raw version numbers (e.g. u64), but versioned is more explicit and self-documenting.\n",
+    "versioned can be used to manage versions of objects, an application's data or basically anything else.\n",
+    "A Versioned is an actual object that can be transferred to accounts or kept inside (wrapped or via dynamic fields) of another object.\n",
+    "A Versioned can also store the actual value inside itself instead of the value being a separate object, which is a more common use case.\n\n",
+    "To create a new Versioned object, use the create function. The initial version and value are required. The value must be a store type.\n",
+    "```\nlet v = versioned::create(1, b\"hello\", &mut ctx);\n```\n\n",
+    "To get the current version of the inner type, use the version function.\n",
+    "```\nlet ver = versioned::version(&v);\n```\n\n",
+    "To load the inner value based on the current version, use the load_value function. Caller specifies an expected type T. If the type mismatch, the load will fail.\n",
+    "```\nlet val = versioned::load_value(&v);\n```\n\n",
+    "To take the inner object out for upgrade, use the remove_value_for_upgrade function. To ensure we always upgrade properly, a capability object is returned and must be used when we upgrade.\n",
+    "```\nlet (val, cap) = versioned::remove_value_for_upgrade(&mut v);\n```\n\n",
+    "To upgrade the inner object with a new version and new value, use the upgrade function. Must use the capability returned by calling remove_value_for_upgrade.\n",
+    "```\nversioned::upgrade(&mut v, 2, b\"world\", cap);\n```\n\n",
+    "To destroy this Versioned container, and return the inner object, use the destroy function.\n",
+    "```\nlet val = versioned::destroy(v);\n```\n"
+  ]
 }

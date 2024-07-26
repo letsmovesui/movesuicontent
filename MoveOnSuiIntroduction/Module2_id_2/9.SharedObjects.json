@@ -19,5 +19,14 @@
   "codeDef": "",
   "title": "Shared objects - parallel execution and consensus",
   "quizTitle": "If we have a `SuiFrenConfig` object that's initialized in the init function but never changed. What kind of object should it be?",
-  "content": "Another hidden knowledge that's good to know as developer on Sui: In general, it's better to design your smart contracts to use Owned objects as much as possible. Shared objects should generally only be used for shared state across many users, and immutable objects are preferred over shared objects if that state doesn't need to change.\n\nShared objects go through a separate execution path on the Sui network as it requires full consensus. If any users can change a shared object, there can be conflicts that lead to different final results depending on the ordering. Therefore, the Sui network needs to use a full Consensus process and make sure all Sui validators agree on the ordering and the final results before they are committed to storage. Because of this, shared objects would take longer to execute and impose a higher cost on the Sui network than owned or immutable objects. You can think of this as the Sui network works the best if as many objects can be owned or immutable or possible.\n\nThe general rules of thumb are:\n1. Immutable objects for all shared state of a contract if the data never changes.\n2. Shared objects for shared state that can be updated.\n3. Owned objects for everything else. "
+  "content": [
+    "Another hidden knowledge that's good to know as developer on Sui: In general, it's better to design your smart contracts to use Owned objects as much as possible. Shared objects should generally only be used for shared state across many users, and immutable objects are preferred over shared objects if that state doesn't need to change.\n",
+    "\n",
+    "Shared objects go through a separate execution path on the Sui network as it requires full consensus. If any users can change a shared object, there can be conflicts that lead to different final results depending on the ordering. Therefore, the Sui network needs to use a full Consensus process and make sure all Sui validators agree on the ordering and the final results before they are committed to storage. Because of this, shared objects would take longer to execute and impose a higher cost on the Sui network than owned or immutable objects. You can think of this as the Sui network works the best if as many objects can be owned or immutable or possible.\n",
+    "\n",
+    "The general rules of thumb are:\n",
+    "1. Immutable objects for all shared state of a contract if the data never changes.\n",
+    "2. Shared objects for shared state that can be updated.\n",
+    "3. Owned objects for everything else.\n"
+  ]
 }

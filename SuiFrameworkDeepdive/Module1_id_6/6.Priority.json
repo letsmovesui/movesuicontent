@@ -6,5 +6,26 @@
   "codeDef": "public fun sort<T: copy>(v: vector<T>): vector<T> {\n    // Implement\n}",
   "title": "Priority queue",
   "quizTitle": "Exercises: Given a vector of elements, sort it using a priority queue.",
-  "content": "Priority queue is a data structure that allows you to insert elements with a priority and then pop the element with the highest priority. It's a very useful data structure and is used in many algorithms and applications.\nPriority queues are great for keeping items sorted and quickly finding the item with the highest priority.\n\nIn Sui Move, PriorityQueue can be created with custom priority for each entry. Comparison functions might be added in later evolutions of Sui Move.\n\nTo create a new PriorityQueue:\n```\nlet h = priority_queue::new(create_entries(vector[3,1,4,2,5,2], vector[10, 20, 30, 40, 50, 60]));\n```\nThe types of elements can be inferred from the entries created.\n\nTo insert a single new entry:\n```\npriority_queue::insert(&mut h, 7, 70);\n```\n\nTo pop the entry with the highest priority:\n```\nlet (priority, value) = priority_queue::pop_max(&mut h);\n```\nCurrently, the priority queue does not allow changing the priority or value of an existing entry. Nor does it allow removing an arbitrary entry. These features might be added in later evolutions of Sui Move."
+  "content": [
+    "Priority queue is a data structure that allows you to insert elements with a priority and then pop the element with the highest priority.\n",
+    "It's a very useful data structure and is used in many algorithms and applications.\n",
+    "Priority queues are great for keeping items sorted and quickly finding the item with the highest priority.\n",
+    "\n",
+    "In Sui Move, PriorityQueue can be created with custom priority for each entry.\n",
+    "Comparison functions might be added in later evolutions of Sui Move.\n",
+    "\n",
+    "To create a new PriorityQueue:\n",
+    "```\nlet h = priority_queue::new(create_entries(vector[3,1,4,2,5,2], vector[10, 20, 30, 40, 50, 60]));\n```\n",
+    "The types of elements can be inferred from the entries created.\n",
+    "\n",
+    "To insert a single new entry:\n",
+    "```\npriority_queue::insert(&mut h, 7, 70);\n```\n",
+    "\n",
+    "To pop the entry with the highest priority:\n",
+    "```\nlet (priority, value) = priority_queue::pop_max(&mut h);\n```\n",
+    "\n",
+    "Currently, the priority queue does not allow changing the priority or value of an existing entry.\n",
+    "Nor does it allow removing an arbitrary entry.\n",
+    "These features might be added in later evolutions of Sui Move.\n"
+  ]
 }
